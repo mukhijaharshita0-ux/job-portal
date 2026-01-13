@@ -1,0 +1,62 @@
+/* 
+.job-navbar {
+    background-color: #0b66c3;
+    border: none;
+    border-radius: 0;
+}
+
+.job-navbar .navbar-brand,
+.job-navbar .navbar-nav > li > a {
+    color: #fff !important;
+    font-weight: 500;
+}
+
+.job-navbar .navbar-nav > li > a:hover,
+.job-navbar .navbar-nav > .active > a {
+    background-color: #084c96 !important;
+}
+
+.job-hero {
+    margin-top: 60px;
+}
+
+.hire-heading {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.job-hero-content p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    margin-top: 30px;
+}
+
+.hero-buttons .btn {
+    margin-right: 10px;
+}
+
+.job-hero-img {
+    border-radius: 6px;
+}
+.account-modal {
+    position: absolute;
+    width: 320px;
+    margin: 0;
+}
+
+.modal-backdrop {
+    display: none;
+}
+ */
+.no-bullet {
+  list-style: none;
+}
+.resume-link {
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+

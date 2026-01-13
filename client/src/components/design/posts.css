@@ -1,0 +1,104 @@
+/* ===== FIX NAVBAR OVERLAP ===== */
+.job-form-wrapper {
+  margin-top: 120px; /* space below fixed navbar */
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== HEADER ===== */
+.job-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.job-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.job-header p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ===== FORM GRID ===== */
+.form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== INPUTS ===== */
+.form-control {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #2563eb;
+}
+
+/* ===== LABEL ===== */
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+/* ===== TEXTAREA ===== */
+textarea.form-control {
+  resize: vertical;
+}
+
+/* ===== BUTTON ===== */
+.btn-submit {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-submit:hover {
+  background-color: #1e40af;
+}
+
+.btn-submit:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .job-form-wrapper {
+    margin-top: 100px;
+    padding: 20px;
+  }
+}

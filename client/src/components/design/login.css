@@ -1,0 +1,103 @@
+/* ===== Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+/* ===== Wrapper ===== */
+.login-wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== Card ===== */
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 25px;
+  border-radius: 14px;
+  border: 2px solid #2563eb;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
+}
+
+/* ===== Heading ===== */
+.login-title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 5px;
+}
+
+.login-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 25px;
+}
+
+/* ===== Form ===== */
+.login-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label-custom {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #1f2937;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1.5px solid #2563eb;
+  font-size: 14px;
+}
+
+.form-input:focus {
+  outline: none;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+}
+
+/* ===== Button ===== */
+.login-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-btn:hover {
+  background: #1e40af;
+}
+
+/* ===== Footer ===== */
+.login-footer {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+.login-footer a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #2563eb;
+  margin-left: 4px;
+}
+

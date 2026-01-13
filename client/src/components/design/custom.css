@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+.job-navbar {
+  padding: 10px 20px;
+}
+
+.job-brand {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.nav-link {
+  margin-left: 15px;
+  font-size: 16px;
+}
+
+.logout-btn {
+  color: #ff6b6b !important;
+}
+
+.logout-btn:hover {
+  color: #ff3b3b !important;
+}
