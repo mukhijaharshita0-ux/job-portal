@@ -5,7 +5,6 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 
-import { connectDB } from "./config/database.js";
 import jobRoute from "./routes/jobs.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import applyRoutes from "./routes/apply.routes.js";
