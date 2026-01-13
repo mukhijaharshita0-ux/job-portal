@@ -1,4 +1,12 @@
+
 {
+  "name": "job-portal",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js",
+    "build": "echo Build successful"
+  },
   "dependencies": {
     "dotenv": "^17.2.3"
   }
