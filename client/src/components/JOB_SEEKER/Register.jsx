@@ -1,6 +1,6 @@
 import "../design/register.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 function Register() {
@@ -8,6 +8,12 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/users", { replace: true });
+    }
+  }, [navigate]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
