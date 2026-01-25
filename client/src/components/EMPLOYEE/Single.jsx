@@ -45,7 +45,8 @@ const [menuOpen, setMenuOpen] = useState(false);
         onMouseLeave={() => setShowProfile(false)}
       >
         Profile
-        <ProfileModal show={showProfile} />
+        {showProfile && <ProfileModal show={showProfile} />}
+
       </div>
 
       {/* LOGOUT */}
@@ -114,7 +115,7 @@ const [menuOpen, setMenuOpen] = useState(false);
 
 
       {/* PAGE CONTENT */}
-      <div className="mt-[120px] w-full">
+      <div className="w-full">
         <figure className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
           <img
             src={resume}

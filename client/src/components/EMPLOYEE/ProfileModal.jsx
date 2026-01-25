@@ -4,6 +4,8 @@ import axios from "axios";
 function ProfileModal({ show }) {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
+c
+
 
   useEffect(() => {
     if (!show) return;
