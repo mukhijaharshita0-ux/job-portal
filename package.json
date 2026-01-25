@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js",
-    "build": "echo Build successful"
+    "dev": "echo Build successful",
+    "build": "vite build",
+  "preview": "vite preview"
   },
   "dependencies": {
     "dotenv": "^17.2.3"
