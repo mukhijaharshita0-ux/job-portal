@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
+const API = import.meta.env.VITE_API_URL;
 
 function Login() {
   const [name, setName] = useState("");
@@ -9,12 +11,9 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/users", { replace: true });
-    }
+    if (token) navigate("/users", { replace: true });
   }, [navigate]);
 
   const handleLogin = async (e) => {
@@ -22,30 +21,19 @@ function Login() {
     setError("");
 
     try {
-      const res = await axios.post(
-        "http://localhost:4000/api/users/login",
-        {
-          name,
-          password,
-        }
-      );
+      const res = await axios.post(`${API}/api/users/login`, {
+        name,
+        password,
+      });
 
-      // save token
       localStorage.setItem("token", res.data.token);
-
-      // 🔥 save user
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // navigate
       navigate("/users", { replace: true });
-
-
     } catch (err) {
-      console.error("LOGIN ERROR 👉", err);
-
       setError(
         err.response?.data?.message ||
-        "Invalid credentials or server not running"
+          "Login failed. Please try again."
       );
     }
   };
@@ -61,7 +49,9 @@ function Login() {
         </h2>
 
         {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+          <p className="text-red-500 text-sm mb-4 text-center">
+            {error}
+          </p>
         )}
 
         <input
@@ -73,7 +63,6 @@ function Login() {
           required
         />
 
-        {/* PASSWORD FIELD */}
         <div className="relative mb-6">
           <input
             type={showPassword ? "text" : "password"}
@@ -83,7 +72,6 @@ function Login() {
             className="w-full p-3 border rounded pr-12"
             required
           />
-
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
@@ -93,18 +81,15 @@ function Login() {
           </button>
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700"
-        >
+        <button className="w-full bg-blue-600 text-white py-3 rounded">
           Login
         </button>
 
         <p className="text-center text-sm mt-4">
           Don’t have an account?{" "}
-          <a href="/register" className="text-blue-600 font-medium">
+          <Link to="/register" className="text-blue-600 font-medium">
             Register
-          </a>
+          </Link>
         </p>
       </form>
     </div>

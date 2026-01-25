@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const API = import.meta.env.VITE_API_URL;
+
 function Register() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +16,7 @@ function Register() {
       navigate("/users", { replace: true });
     }
   }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -22,11 +25,7 @@ function Register() {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      const res = await axios.post("http://localhost:4000/api/jobs/register", data);
-
-      // ✅ now this works
-      console.log(res.data.userId);
-
+      await axios.post(`${API}/api/jobs/register`, data);
       navigate("/login");
     } catch (err) {
       setError(
@@ -35,18 +34,9 @@ function Register() {
     }
   };
 
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-blue-200 to-purple-200 font-['Inter']">
-      <div
-        className="
-          max-w-2xl w-full
-          bg-white/25 backdrop-blur-xl
-          border border-white/40
-          p-8 rounded-2xl
-          shadow-xl shadow-blue-300/20
-        "
-      >
+      <div className="max-w-2xl w-full bg-white/25 backdrop-blur-xl border border-white/40 p-8 rounded-2xl shadow-xl shadow-blue-300/20">
         <h2 className="text-3xl font-bold text-center text-blue-900 mb-2">
           Create Account
         </h2>
@@ -54,7 +44,6 @@ function Register() {
           Join the Job Portal today
         </p>
 
-        {/* Error */}
         {error && (
           <p className="mb-6 text-sm text-red-600 text-center font-medium">
             {error}
@@ -63,16 +52,12 @@ function Register() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Name & Email */}
           <div className="grid md:grid-cols-2 gap-6">
             <FloatingInput label="Full Name" name="name" type="text" />
             <FloatingInput label="Email Address" name="email" type="email" />
           </div>
 
-          {/* Education & Password */}
           <div className="grid md:grid-cols-2 gap-6">
-
-            {/* Education */}
             <SelectInput
               name="education"
               label="Education Level"
@@ -84,24 +69,19 @@ function Register() {
               ]}
             />
 
-            {/* Password */}
             <div className="relative z-0 w-full group">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder=" "
                 required
-                className="
-                  block py-2.5 px-0 w-full text-sm text-blue-900
-                  bg-transparent border-0 border-b-2 border-blue-300
-                  focus:outline-none focus:ring-0 focus:border-blue-500 peer
-                "
+                className="block py-2.5 px-0 w-full text-sm text-blue-900 bg-transparent border-0 border-b-2 border-blue-300 focus:outline-none focus:ring-0 focus:border-blue-500 peer"
               />
               <label className="floating-label">Password</label>
 
               <button
                 type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
+                onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-0 top-3 text-xs font-semibold text-blue-700"
               >
                 {showPassword ? "HIDE" : "SHOW"}
@@ -109,38 +89,19 @@ function Register() {
             </div>
           </div>
 
-          {/* Age & Phone */}
           <div className="grid md:grid-cols-2 gap-6">
             <FloatingInput label="Age" name="age" type="number" />
             <FloatingInput label="Phone Number" name="phone" type="tel" />
           </div>
 
+          <FloatingInput label="City" name="city" type="text" />
 
-
-          <div className="grid md:grid-cols-1 gap-6">
-            <FloatingInput label="City" name="city" type="text" />
-          </div>
-
-          {/* Submit */}
           <button
             type="submit"
-            className="
-              w-full mt-4
-              text-white bg-blue-600/80 hover:bg-blue-700
-              focus:ring-4 focus:ring-blue-300/50
-              shadow-md shadow-blue-300/30
-              font-semibold rounded-lg text-sm
-              px-4 py-2.5
-              transition-all
-            "
+            className="w-full mt-4 text-white bg-blue-600/80 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300/50 shadow-md shadow-blue-300/30 font-semibold rounded-lg text-sm px-4 py-2.5 transition-all"
           >
             Register
           </button>
-
-          <p className="text-xs text-center text-blue-700 mt-4">
-            By creating an account, you agree to our{" "}
-            <span className="underline">Terms & Privacy</span>.
-          </p>
 
           <div className="text-center text-sm text-blue-900 mt-2">
             Already have an account?{" "}
@@ -148,14 +109,13 @@ function Register() {
               Login
             </Link>
           </div>
-
         </form>
       </div>
     </div>
   );
 }
 
-/* 🔹 Floating Input */
+/* Floating Input */
 function FloatingInput({ label, name, type }) {
   return (
     <div className="relative z-0 w-full group">
@@ -164,42 +124,28 @@ function FloatingInput({ label, name, type }) {
         name={name}
         placeholder=" "
         required
-        className="
-          block py-2.5 px-0 w-full text-sm text-blue-900
-          bg-transparent border-0 border-b-2 border-blue-300
-          focus:outline-none focus:ring-0 focus:border-blue-500 peer
-        "
+        className="block py-2.5 px-0 w-full text-sm text-blue-900 bg-transparent border-0 border-b-2 border-blue-300 focus:outline-none focus:ring-0 focus:border-blue-500 peer"
       />
       <label className="floating-label">{label}</label>
     </div>
   );
 }
 
-/* 🔹 Select Input */
+/* Select Input */
 function SelectInput({ name, label, options }) {
   return (
     <div className="relative z-0 w-full group">
       <select
         name={name}
         required
-        className="
-          block py-2.5 px-0 w-full text-sm text-blue-900
-          bg-transparent border-0 border-b-2 border-blue-300
-          focus:outline-none focus:ring-0 focus:border-blue-500 peer
-        "
+        className="block py-2.5 px-0 w-full text-sm text-blue-900 bg-transparent border-0 border-b-2 border-blue-300 focus:outline-none focus:ring-0 focus:border-blue-500 peer"
       >
         <option value="" />
-        {options.map((opt, i) =>
-          typeof opt === "string" ? (
-            <option key={i} value={opt.toLowerCase()}>
-              {opt}
-            </option>
-          ) : (
-            <option key={i} value={opt.value}>
-              {opt.label}
-            </option>
-          )
-        )}
+        {options.map((opt, i) => (
+          <option key={i} value={opt.toLowerCase()}>
+            {opt}
+          </option>
+        ))}
       </select>
       <label className="floating-label">{label}</label>
     </div>

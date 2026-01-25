@@ -11,69 +11,72 @@ import {
 } from "lucide-react";
 import "../design/jobs.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
   const navigate = useNavigate();
 
-  /* LOGOUT */
+  /* 🔒 PROTECT ROUTE */
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
+
+  /* 📦 FETCH JOBS */
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/api/jobs/jobs`
+        );
+        setJobs(res.data);
+      } catch (error) {
+        console.error("Error fetching jobs", error);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  /* 🚪 LOGOUT */
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/login", { replace: true });
   };
 
- useEffect(() => {
-  const fetchJobs = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:4000/api/jobs/jobs"
-      );
-
-      setJobs(res.data);
-    } catch (error) {
-      console.error("Error fetching jobs", error);
-    }
-  };
-
-  fetchJobs();
-}, []);
-
   return (
     <>
-      {/* NAVBAR (same as Myjobs) */}
-    <nav className="w-full bg-white border-b">
-
+      {/* NAVBAR */}
+      <nav className="w-full bg-white border-b">
         <div className="max-w-screen-xl mx-auto flex items-center p-4 relative text-[#000080]">
 
-          {/* LEFT: LOGO */}
+          {/* LOGO */}
           <div className="flex items-center">
             <Link
               to="/"
               className="flex items-center text-[#000080] hover:text-[#1a1a99] text-3xl font-semibold transition"
-
               style={{ fontFamily: "'Limelight', cursive" }}
             >
               Jobsy
             </Link>
           </div>
 
-          {/* CENTER: NAV ITEMS */}
+          {/* CENTER NAV */}
           <div className="absolute left-1/2 -translate-x-1/2 flex gap-8 font-medium">
-            <Link
-              to="/"
-              className="hover:text-[#1a1a99]"
-            >
+            <Link to="/" className="hover:text-[#1a1a99]">
               Home
             </Link>
-            <Link
-              to="/jobs"
-              className="hover:text-[#1a1a99]"
-            >
+            <Link to="/jobs" className="hover:text-[#1a1a99]">
               Jobs
             </Link>
           </div>
 
-          {/* RIGHT: PROFILE + LOGOUT */}
+          {/* RIGHT */}
           <div className="ml-auto flex items-center gap-6 font-medium">
             <div
               className="cursor-pointer hover:text-[#1a1a99]"
@@ -95,7 +98,7 @@ const Jobs = () => {
         </div>
       </nav>
 
-      {/* PAGE CONTENT */}
+      {/* CONTENT */}
       <div className="min-h-screen bg-gray-50 pt-28 px-6">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">
           Available Jobs
@@ -159,14 +162,12 @@ const Jobs = () => {
                 </div>
 
                 {/* APPLY */}
-                <Link
-                  to={`/apply/${job._id}`}
-                  className="block mt-5"
-                >
+                <Link to={`/apply/${job._id}`} className="block mt-5">
                   <button className="w-full bg-[#000080] text-white py-2 rounded-lg hover:bg-blue-700 transition">
                     Apply
                   </button>
                 </Link>
+
               </div>
             ))}
           </div>

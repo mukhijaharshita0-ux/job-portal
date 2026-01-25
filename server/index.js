@@ -30,7 +30,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://jo-bsy.netlify.app"   // ✅ your Netlify frontend
+      "https://job-portal-e36f.vercel.app"   // ✅ your Netlify frontend
     ],
     credentials: true,
   })
