@@ -1,63 +1,81 @@
-// import { useEffect } from "react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
-// import "../design/users.css";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-// function Users() {
-//   const navigate = useNavigate();
+function Users() {
+  const navigate = useNavigate();
 
-//   useEffect(() => {
-//     const token = localStorage.getItem("token");
+  //  Block page if not logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
 
+  //  Handle role selection safely
+  const handleRoleSelect = (role) => {
+    const storedUser = localStorage.getItem("user");
 
-//     if (!token) {
-//       navigate("/login");
-//       return;
-//     }
+    let user = {};
 
+    //  SAFE PARSING (NO CRASH EVER)
+    if (storedUser && storedUser !== "undefined") {
+      try {
+        user = JSON.parse(storedUser);
+      } catch (err) {
+        console.error("Invalid user data. Resetting user.");
+        user = {};
+      }
+    }
 
-//     axios
-//       .get("http://localhost:4000/api/role/users", {
-//         headers: {
-//           Authorization: `Bearer ${token}`
-//         }
-//       })
-//       .catch(() => {
+    //  Save role permanently until logout
+    const updatedUser = {
+      ...user,
+      role,
+    };
 
-//         localStorage.removeItem("token");
-//         navigate("/login");
-//       });
-//   }, [navigate]);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
 
-//   return (
-//     <div className="role-page">
-//       <div className="role-card">
-//         <p className="role-subtitle">Tell us who you are?</p>
+    //  Redirect based on role
+    if (role === "employee") {
+      navigate("/single", { replace: true });
+    } else {
+      navigate("/", { replace: true });
+    }
+  };
 
-//         <div className="role-options">
-//           {/* JOB SEEKER */}
-//           <button
-//             className="role-button primary"
-//             onClick={() => navigate("/")}
-//           >
-//             Job Seeker
-//           </button>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700">
+      <div className="bg-white rounded-2xl shadow-2xl p-10 w-[360px] text-center">
+        <p className="text-2xl font-semibold text-gray-800 mb-2">
+          Welcome 👋
+        </p>
+        <p className="text-gray-500 mb-8">
+          Tell us who you are
+        </p>
 
-//           {/* EMPLOYEE */}
-//           <button
-//             className="role-button secondary"
-//             onClick={() => {
-//               localStorage.setItem("role", "employee");
-//               navigate("/single");
-//             }}
-//           >
-//             Employee
-//           </button>
+        <div className="flex flex-col gap-4">
+          <button
+            onClick={() => handleRoleSelect("jobseeker")}
+            className="w-full py-3 rounded-xl text-white bg-indigo-600
+                       hover:bg-indigo-700 hover:scale-105
+                       transition-all duration-300"
+          >
+            Job Seeker
+          </button>
 
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+          <button
+            onClick={() => handleRoleSelect("employee")}
+            className="w-full py-3 rounded-xl text-white bg-purple-600
+                       hover:bg-purple-700 hover:scale-105
+                       transition-all duration-300"
+          >
+            Employee
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-// export default Users;
+export default Users;

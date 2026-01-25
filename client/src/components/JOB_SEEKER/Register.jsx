@@ -16,7 +16,7 @@ function Register() {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      const res = await axios.post("http://localhost:4000/register", data);
+      const res = await axios.post("http://localhost:4000/api/jobs/register", data);
 
       // ✅ now this works
       console.log(res.data.userId);
@@ -109,17 +109,9 @@ function Register() {
             <FloatingInput label="Phone Number" name="phone" type="tel" />
           </div>
 
-          {/* Role & City */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <SelectInput
-              name="role"
-              label="What's your role?"
-              options={[
-                { label: "Job Seeker", value: "jobseeker" },
-                { label: "Employee", value: "employee" },
-              ]}
-            />
 
+
+          <div className="grid md:grid-cols-1 gap-6">
             <FloatingInput label="City" name="city" type="text" />
           </div>
 

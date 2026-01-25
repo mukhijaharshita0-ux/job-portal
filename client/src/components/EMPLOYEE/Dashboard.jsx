@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import EmailModel from "./EmailModel";
+import ProfileModal from "./ProfileModal";
 
 function Dashboard() {
     const navigate = useNavigate();
+const [menuOpen, setMenuOpen] = useState(false);
 
     const [candidates, setCandidates] = useState([]);
     const [isEmailOpen, setIsEmailOpen] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
-
+    const [showProfile, setShowProfile] = useState(false);
     // ✅ FETCH APPLICANTS
     const fetchCandidates = () => {
-        fetch("http://localhost:4000/applicants")
+        fetch("http://localhost:4000/api/applicants")
             .then(res => res.json())
             .then(data => {
                 const formatted = data.map(item => ({
@@ -38,7 +40,7 @@ function Dashboard() {
         };
     }, []);
 
-    // ✅ UPDATE STATUS (FRONTEND ONLY)
+    //  UPDATE STATUS (FRONTEND ONLY)
     const updateStatus = (id, newStatus) => {
         setCandidates(prev =>
             prev.map(c =>
@@ -46,34 +48,104 @@ function Dashboard() {
             )
         );
     };
-
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+    };
     return (
         <>
-            <nav className="fixed top-0 w-full z-20 bg-white border-b">
-                <div className="max-w-screen-xl mx-auto flex justify-between items-center p-4">
-                    <a href="/" className="flex items-center gap-3">
-                        <img
-                            src="https://flowbite.com/docs/images/logo.svg"
-                            className="h-7"
-                            alt="logo"
-                        />
-                        <span className="text-xl font-semibold">JobPortal</span>
-                    </a>
+           <nav className="bg-neutral-primary w-full border-b border-default">
+             <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4 relative">
+           
+               {/* LOGO */}
+               <Link
+                 to="/single"
+                 className="flex items-center text-[#000080] hover:text-[#1a1a99] 
+                            text-2xl sm:text-3xl font-semibold transition"
+                 style={{ fontFamily: "'Limelight', cursive" }}
+               >
+                 Jobsy
+               </Link>
+           
+               {/* RIGHT ACTIONS */}
+               <div className="flex items-center gap-4 md:order-2">
+           
+                 {/* PROFILE */}
+                 <div
+                   className="relative text-[#000080] cursor-pointer font-medium hidden sm:block"
+                   onMouseEnter={() => setShowProfile(true)}
+                   onMouseLeave={() => setShowProfile(false)}
+                 >
+                   Profile
+                   <ProfileModal show={showProfile} />
+                 </div>
+           
+                 {/* LOGOUT */}
+                 <button
+                   onClick={handleLogout}
+                   className="hidden sm:block text-[#000080] font-medium text-sm px-3 py-2 transition"
+                 >
+                   Logout
+                 </button>
+           
+                 {/* HAMBURGER */}
+                 <button
+                   type="button"
+                   onClick={() => setMenuOpen(!menuOpen)}
+                   className="text-[#000080] inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
+                 >
+                   ☰
+                 </button>
+               </div>
+           
+               {/* MENU */}
+               <div
+                 className={`
+                   text-[#000080]
+                   absolute md:static
+                   top-full left-0
+                   w-full md:w-auto
+                   bg-white md:bg-transparent
+                   shadow-md md:shadow-none
+                   ${menuOpen ? "block" : "hidden"}
+                   md:flex md:order-1
+                 `}
+               >
+                 <ul className="flex flex-col md:flex-row gap-4 md:gap-8 font-medium p-4 md:p-0">
+                   <li>
+                     <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
+                       Dashboard
+                     </Link>
+                   </li>
+                   <li>
+                     <Link to="/myjobs" onClick={() => setMenuOpen(false)}>
+                       My Jobs
+                     </Link>
+                   </li>
+                   <li>
+                     <Link to="/posts" onClick={() => setMenuOpen(false)}>
+                       Post a Job
+                     </Link>
+                   </li>
+                   <li>
+                     <Link to="/contact" onClick={() => setMenuOpen(false)}>
+                       Contact
+                     </Link>
+                   </li>
+           
+                   {/* MOBILE ONLY */}
+                   <li className="sm:hidden">
+                     <button onClick={handleLogout}>Logout</button>
+                   </li>
+                 </ul>
+               </div>
+           
+             </div>
+           </nav>
 
-                    <div className="flex gap-6 font-medium">
-                        <a href="/dashboard" className="text-blue-600">Dashboard</a>
-                        <a href="/myjobs" className="hover:text-blue-600">My Jobs</a>
-                        <a href="/posts" className="hover:text-blue-600">Post a Job</a>
-                        <a href="/contact" className="hover:text-blue-600">Contact</a>
-                    </div>
+           <div className="min-h-screen bg-gray-100 px-2 sm:px-4 pt-24 sm:pt-36">
 
-                    <button className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition">
-                        Logout
-                    </button>
-                </div>
-            </nav>
-
-            <div className="min-h-screen flex items-start justify-center bg-gray-100 px-4 pt-24 sm:pt-40">
                 <div className="max-w-6xl mx-auto bg-white rounded-lg shadow p-6">
 
                     <h1 className="text-2xl font-bold text-gray-800 mb-6">

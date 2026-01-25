@@ -1,177 +1,103 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import "../design/login.css";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    password: "",
-  });
-
-  const [error, setError] = useState("");
-
-  // handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  // ✅ UPDATED LOGIN HANDLER
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:4000/api/login", {
-        name: formData.name,
-        password: formData.password,
-      });
+      const res = await axios.post(
+        "http://localhost:4000/api/users/login",
+        {
+          name,
+          password,
+        }
+      );
 
-      // ✅ STORE TOKEN, ROLE & USER ID
+      // save token
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
-      localStorage.setItem("userId", res.data.userId);
 
-      // ✅ ROLE BASED REDIRECT
-      if (res.data.role === "employee") {
-        navigate("/dashboard");
-      } else if (res.data.role === "jobseeker") {
-        navigate("/jobs");
-      } else {
-        navigate("/");
-      }
+      // 🔥 save user
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // navigate
+      navigate("/users", { replace: true });
+
 
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid username or password");
-    } finally {
-      setLoading(false);
+      console.error("LOGIN ERROR 👉", err);
+
+      setError(
+        err.response?.data?.message ||
+        "Invalid credentials or server not running"
+      );
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-blue-200 to-purple-200 font-['Inter']">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
-        onSubmit={handleSubmit}
-        className="
-          max-w-sm w-full
-          bg-white/25 backdrop-blur-xl
-          border border-white/40
-          p-6 rounded-2xl
-          shadow-xl shadow-blue-300/20
-          transition-all duration-300
-          hover:scale-[1.02]
-        "
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold text-center mb-2 text-blue-900">
-          Job Portal
+        <h2 className="text-2xl font-bold text-center mb-6">
+          Login to Job Portal
         </h2>
 
-        <p className="text-sm text-center mb-6 text-blue-700/80">
-          Login to continue
-        </p>
+        {error && (
+          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+        )}
 
-        {/* Username */}
-        <div className="mb-5">
-          <label className="block mb-2 text-sm font-semibold text-blue-900">
-            Username
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Enter username"
-            required
-            className="
-              w-full px-3 py-2.5
-              rounded-lg
-              bg-white/30
-              border border-white/40
-              text-sm text-blue-900
-              focus:ring-2 focus:ring-blue-400
-            "
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Username"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full p-3 border rounded mb-4"
+          required
+        />
 
-        {/* Password */}
-        <div className="mb-5 relative">
-          <label className="block mb-2 text-sm font-semibold text-blue-900">
-            Password
-          </label>
-
+        {/* PASSWORD FIELD */}
+        <div className="relative mb-6">
           <input
             type={showPassword ? "text" : "password"}
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="••••••••"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border rounded pr-12"
             required
-            className="
-              w-full px-3 py-2.5 pr-12
-              rounded-lg
-              bg-white/30
-              border border-white/40
-              text-sm text-blue-900
-              focus:ring-2 focus:ring-blue-400
-            "
           />
 
           <button
             type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="
-              absolute right-3 top-10
-              text-xs font-semibold
-              text-blue-700 hover:text-blue-900
-            "
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-3 text-gray-600 text-sm"
           >
-            {showPassword ? "HIDE" : "SHOW"}
+            {showPassword ? "Hide" : "Show"}
           </button>
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
-          disabled={loading}
-          className="
-            w-full py-2.5 rounded-lg
-            bg-blue-600/80 hover:bg-blue-700
-            text-white font-semibold text-sm
-            focus:ring-4 focus:ring-blue-300/50
-            transition
-            disabled:opacity-60
-          "
+          className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700"
         >
-          {loading ? "Logging in..." : "Login"}
+          Login
         </button>
 
-        {/* Footer */}
-        <div className="text-center mt-4 text-sm text-blue-900">
-          Don’t have an account?
-          <Link
-            to="/register"
-            className="text-blue-700 hover:underline ml-1"
-          >
+        <p className="text-center text-sm mt-4">
+          Don’t have an account?{" "}
+          <a href="/register" className="text-blue-600 font-medium">
             Register
-          </Link>
-        </div>
-
-        {/* Error */}
-        {error && (
-          <p className="mt-4 text-sm text-red-600 text-center font-medium">
-            {error}
-          </p>
-        )}
+          </a>
+        </p>
       </form>
     </div>
   );

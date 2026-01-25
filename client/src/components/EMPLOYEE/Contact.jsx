@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import ProfileModal from "./ProfileModal";
 
 function Contact() {
   const [name, setName] = useState("");
@@ -6,6 +8,8 @@ function Contact() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
+const [showProfile, setShowProfile] = useState(false);
+  const navigate = useNavigate();
 
   // Optional: check backend route
   useEffect(() => {
@@ -52,32 +56,88 @@ function Contact() {
       setLoading(false);
     }
   };
-
+const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
   return (
       <>
-     <nav className="fixed top-0 w-full z-20 bg-white border-b">
-        <div className="max-w-screen-xl mx-auto flex justify-between items-center p-4">
-          <a href="/" className="flex items-center gap-3">
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="h-7"
-              alt="logo"
-            />
-            <span className="text-xl font-semibold">JobPortal</span>
-          </a>
+  <nav className="bg-neutral-primary fixed w-full z-20 top-0 border-b border-default">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
 
-          <div className="flex gap-6 font-medium">
-            <a href="/dashboard" className="text-blue-600">Dashboard</a>
-            <a href="/myjobs" className="hover:text-blue-600">My Jobs</a>
-            <a href="/posts" className="hover:text-blue-600">Post a Job</a>
-            <a href="/contact" className="hover:text-blue-600">Contact</a>
+          <Link
+            to="/single"
+            className="flex items-center text-[#000080] hover:text-[#1a1a99] text-3xl font-semibold transition"
+
+            style={{ fontFamily: "'Limelight', cursive" }}
+          >
+            Jobsy
+          </Link>
+
+
+
+
+
+          {/* RIGHT ACTIONS */}
+          <div className="flex items-center gap-4 md:order-2 relative">
+
+            {/* PROFILE HOVER */}
+            <div
+              className="relative text-[#000080] cursor-pointer font-medium nav-item profile-item"
+              onMouseEnter={() => setShowProfile(true)}
+              onMouseLeave={() => setShowProfile(false)}
+            >
+              Profile
+              <ProfileModal show={showProfile} />
+            </div>
+
+            {/* LOGOUT */}
+            <button
+              onClick={handleLogout}
+              className="text-blue bg-brand text-[#000080] hover:bg-brand-strong font-medium rounded-base text-sm px-3 py-2 transition"
+            >
+              Logout
+            </button>
+
+            {/* MOBILE MENU ICON */}
+            <button
+              type="button"
+              className="text-[#000080] inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
+            >
+              ☰
+            </button>
           </div>
 
-          <button className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition">
-            Logout
-          </button>
+          {/* MENU */}
+          <div className="text-[#000080] hidden md:flex md:order-1">
+            <ul className="flex gap-8 font-medium">
+              <li>
+                <Link to="/dashboard" className="text-blue">
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/myjobs" className="hover:text-blue">
+                  My Jobs
+                </Link>
+              </li>
+              <li>
+                <Link to="/posts" className="hover:text-blue">
+                  Post a Job
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-blue">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+
         </div>
       </nav>
+
 
   <div className="min-h-screen flex items-start justify-center bg-gray-100 px-4 pt-24 sm:pt-25">
   <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8">
@@ -101,7 +161,7 @@ function Contact() {
             <input
               type="text"
               placeholder="Your name"
-              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#000080]-500 outline-none"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -116,7 +176,7 @@ function Contact() {
             <input
               type="tel"
               placeholder="+91 9876543210"
-              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#000080]-500 outline-none"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
@@ -131,7 +191,7 @@ function Contact() {
             <textarea
               rows="4"
               placeholder="Type your SMS message..."
-              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#000080]-500 outline-none resize-none"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
@@ -142,7 +202,7 @@ function Contact() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition disabled:opacity-50"
+            className="w-full bg-[#000080] hover:bg-[#1a1a99] text-white font-medium py-2.5 rounded-lg transition disabled:opacity-50"
           >
             {loading ? "Sending..." : "Send SMS"}
           </button>

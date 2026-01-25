@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-const jobSchema = mongoose.Schema({
+const jobSchema =new  mongoose.Schema({
     title: {
         type: String
     },
@@ -40,12 +40,19 @@ const jobSchema = mongoose.Schema({
         type: String
     },
     email: {
-        type: String
+        type: String,
+
     },
-})
-const jobs=mongoose.model("jobs",jobSchema)
-export default  jobs
+        postedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    }
+  },
+    { timestamps: true }
 
+);
 
-
+const jobs = mongoose.model("jobs", jobSchema);
+export default jobs;
 

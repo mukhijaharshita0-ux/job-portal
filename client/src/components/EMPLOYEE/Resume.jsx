@@ -1,64 +1,141 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import ProfileModal from "./ProfileModal";
 
 function Resume() {
-  const { jobId } = useParams();
-  const [applicants, setApplicants] = useState([]);
-
+  const { id } = useParams(); // applicant id
+  const [applicant, setApplicant] = useState(null);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+ const [showProfile, setShowProfile] = useState(false);
   useEffect(() => {
-    fetch(`http://localhost:4000/resume/${jobId}`)
+  if (!id) return;
 
-      .then(res => res.json())
-      .then(data => setApplicants(data))
-      .catch(err => console.log(err));
-  }, [jobId]);
+  fetch(`http://localhost:4000/resume/applicant/${id}`)
+    .then(res => res.json())
+    .then(data => {
+      setApplicant(data);
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+}, [id]);
 
+  if (loading) {
+    return <p className="mt-24 text-center">Loading resume...</p>;
+  }
+
+  if (!applicant) {
+    return <p className="mt-24 text-center">No resume found</p>;
+  }
+const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
   return (
     <>
-    <nav className="fixed top-0 w-full z-20 bg-white border-b">
-        <div className="max-w-screen-xl mx-auto flex justify-between items-center p-4">
-          <a href="/" className="flex items-center gap-3">
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="h-7"
-              alt="logo"
-            />
-            <span className="text-xl font-semibold">JobPortal</span>
-          </a>
+      {/* NAVBAR */}
+     <nav className="bg-neutral-primary w-full border-b border-default">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
 
-          <div className="flex gap-6 font-medium">
-            <a href="/dashboard" className="text-blue-600">Dashboard</a>
-            <a href="/myjobs" className="hover:text-blue-600">My Jobs</a>
-            <a href="/posts" className="hover:text-blue-600">Post a Job</a>
-            <a href="/contact" className="hover:text-blue-600">Contact</a>
+          <Link
+            to="/single"
+            className="flex items-center text-[#000080] hover:text-[#1a1a99] text-3xl font-semibold transition"
+
+            style={{ fontFamily: "'Limelight', cursive" }}
+          >
+            Jobsy
+          </Link>
+
+
+
+
+
+          {/* RIGHT ACTIONS */}
+          <div className="flex items-center gap-4 md:order-2 relative">
+
+            {/* PROFILE HOVER */}
+            <div
+              className="relative text-[#000080] cursor-pointer font-medium nav-item profile-item"
+              onMouseEnter={() => setShowProfile(true)}
+              onMouseLeave={() => setShowProfile(false)}
+            >
+              Profile
+              <ProfileModal show={showProfile} />
+            </div>
+
+            {/* LOGOUT */}
+            <button
+              onClick={handleLogout}
+              className="text-blue bg-brand text-[#000080] hover:bg-brand-strong font-medium rounded-base text-sm px-3 py-2 transition"
+            >
+              Logout
+            </button>
+
+            {/* MOBILE MENU ICON */}
+            <button
+              type="button"
+              className="text-[#000080] inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
+            >
+              ☰
+            </button>
           </div>
 
-          <button className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition">
-            Logout
-          </button>
+          {/* MENU */}
+          <div className="text-[#000080] hidden md:flex md:order-1">
+            <ul className="flex gap-8 font-medium">
+              <li>
+                <Link to="/dashboard" className="text-blue">
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/myjobs" className="hover:text-blue">
+                  My Jobs
+                </Link>
+              </li>
+              <li>
+                <Link to="/posts" className="hover:text-blue">
+                  Post a Job
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-blue">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+
         </div>
       </nav>
-    <div className="min-h-screen bg-gray-100 p-10">
-      <h2 className="text-2xl font-bold mb-4">Applied Candidates</h2>
 
-      {applicants.length === 0 && <p>No applicants yet</p>}
+      {/* CONTENT */}
+      <div className="min-h-screen bg-gray-100 p-10 mt-24">
+        <div className="bg-white p-6 rounded shadow max-w-xl mx-auto">
+          <h2 className="text-2xl font-bold mb-4">Candidate Resume</h2>
 
-      {applicants.map(app => (
-        <div key={app._id} className="bg-white p-4 mb-3 rounded shadow">
-          <p><b>Name:</b> {app.fullName}</p>
-          <p><b>Email:</b> {app.email}</p>
+          <p className="mb-2">
+            <b>Name:</b> {applicant.fullName}
+          </p>
+
+          <p className="mb-4">
+            <b>Email:</b> {applicant.email}
+          </p>
 
           <a
-            href={`http://localhost:4000/uploads/${app.resume}`}
+            href={`http://localhost:4000/uploads/${applicant.resume}`}
             target="_blank"
             rel="noreferrer"
-            className="text-blue-600 underline"
+            className="text-blue-600 underline font-medium"
           >
-            View Resume
+            View Resume (PDF)
           </a>
         </div>
-      ))}
-    </div>
+      </div>
     </>
   );
 }

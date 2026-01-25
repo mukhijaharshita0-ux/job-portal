@@ -1,109 +1,140 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
 import resume from "../images/premium_photo-1661328090120-a6ef40841abe.avif";
-import { Link, useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import "../design/single.css";
 
 
 function Single() {
-    const [showProfile, setShowProfile] = useState(false);
-    const { jobId } = useParams();
-    const navigate = useNavigate();
+  const [showProfile, setShowProfile] = useState(false);
+const [menuOpen, setMenuOpen] = useState(false);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");   // remove login token
-        navigate("/login");                 // redirect to login
-    };
-    return (
-        <>
-            {/* NAVBAR */}
-            <nav className="bg-neutral-primary fixed w-full z-20 top-0 start-0 border-b border-default">
-                <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+  const navigate = useNavigate();
 
-                    {/* Logo */}
-                    <a href="/" className="flex items-center space-x-3">
-                        <img
-                            src="https://flowbite.com/docs/images/logo.svg"
-                            className="h-7"
-                            alt="Logo"
-                        />
-                        <span className="self-center text-xl font-semibold whitespace-nowrap">
-                            JobPortal
-                        </span>
-                    </a>
+  /* LOGOUT */
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
 
-                    {/* Right Buttons */}
-                    <div className="flex items-center gap-3 md:order-2 no-bullet">
-                        <li
-                            className="nav-item profile-item"
-                            onMouseEnter={() => setShowProfile(true)}
-                            onMouseLeave={() => setShowProfile(false)}
-                        >
-                            Profile
-                            <ProfileModal show={showProfile} />
-                        </li>
-                        <button
-                            type="button"
-                            onClick={handleLogout}
-                            className="text-blue bg-brand hover:bg-brand-strong font-medium rounded-base text-sm px-3 py-2"
-                        >
-                            Logout
-                        </button>
+  return (
+    <>
+      {/* NAVBAR */}
+    <nav className="bg-neutral-primary w-full border-b border-default">
 
-                        {/* Mobile Menu Button */}
-                        <button
-                            type="button"
-                            className="inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
-                        >
-                            ☰
-                        </button>
-                    </div>
+  <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4 relative">
 
-                    {/* Menu */}
-                    <div className="hidden md:flex md:order-1">
-                        <ul className="flex gap-8 font-medium">
-                            <li><a href="/dashboard" className="text-blue">Dashboard</a></li>
-                            <li><a href="/myjobs" className="hover:text-blue">My Jobs</a></li>
-                            <li><a href="/posts" className="hover:text-blue">Post a Job</a></li>
-                            <li><a href="/contact" className="hover:text-blue">Contact</a></li>
+    {/* LOGO */}
+    <Link
+      to="/single"
+      className="flex items-center text-[#000080] hover:text-[#1a1a99] 
+                 text-2xl sm:text-3xl font-semibold transition"
+      style={{ fontFamily: "'Limelight', cursive" }}
+    >
+      Jobsy
+    </Link>
 
-                        </ul>
-                    </div>
+    {/* RIGHT ACTIONS */}
+    <div className="flex items-center gap-4 md:order-2">
 
-                </div>
-            </nav>
-            <div className="mt-[120px] w-full">
-                <figure className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
-                    <img
-                        src={resume}
-                        alt="Cat background"
-                        className="w-full h-full object-cover"
-                    />
+      {/* PROFILE */}
+      <div
+        className="relative text-[#000080] cursor-pointer font-medium hidden sm:block"
+        onMouseEnter={() => setShowProfile(true)}
+        onMouseLeave={() => setShowProfile(false)}
+      >
+        Profile
+        <ProfileModal show={showProfile} />
+      </div>
 
-                    {/* Overlay text */}
+      {/* LOGOUT */}
+      <button
+        onClick={handleLogout}
+        className="hidden sm:block text-[#000080] font-medium text-sm px-3 py-2 transition"
+      >
+        Logout
+      </button>
 
-                    <figcaption
-                        className="absolute inset-0 flex items-center justify-center bg-black/30"
-                    >
+      {/* HAMBURGER */}
+      <button
+        type="button"
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="text-[#000080] inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
+      >
+        ☰
+      </button>
+    </div>
 
-                        <Link
-                            to={`/resume/${jobId}`}
+    {/* MENU */}
+    <div
+      className={`
+        text-[#000080]
+        absolute md:static
+        top-full left-0
+        w-full md:w-auto
+        bg-white md:bg-transparent
+        shadow-md md:shadow-none
+        ${menuOpen ? "block" : "hidden"}
+        md:flex md:order-1
+      `}
+    >
+      <ul className="flex flex-col md:flex-row gap-4 md:gap-8 font-medium p-4 md:p-0">
+        <li>
+          <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
+            Dashboard
+          </Link>
+        </li>
+        <li>
+          <Link to="/myjobs" onClick={() => setMenuOpen(false)}>
+            My Jobs
+          </Link>
+        </li>
+        <li>
+          <Link to="/posts" onClick={() => setMenuOpen(false)}>
+            Post a Job
+          </Link>
+        </li>
+        <li>
+          <Link to="/contact" onClick={() => setMenuOpen(false)}>
+            Contact
+          </Link>
+        </li>
 
-                            className="block text-white text-xl md:text-2xl font-semibold text-center px-6 capitalize resume-link"
-                        >
-                            Click here to view resume of candidates
-                        </Link>
+        {/* MOBILE ONLY */}
+        <li className="sm:hidden">
+          <button onClick={handleLogout}>Logout</button>
+        </li>
+      </ul>
+    </div>
 
-                    </figcaption>
+  </div>
+</nav>
 
-                </figure>
 
 
-            </div>
+      {/* PAGE CONTENT */}
+      <div className="mt-[120px] w-full">
+        <figure className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
+          <img
+            src={resume}
+            alt="Resume background"
+            className="w-full h-full object-cover"
+          />
 
-        </>
-    );
+          {/* OVERLAY */}
+          <figcaption className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <Link
+              to='/resumes'
+              className="block text-white text-xl md:text-2xl font-semibold text-center px-6 capitalize resume-link"
+            >
+              Click here to view resume of candidates
+            </Link>
+          </figcaption>
+        </figure>
+      </div>
+    </>
+  );
 }
 
 export default Single;

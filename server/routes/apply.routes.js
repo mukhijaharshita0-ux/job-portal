@@ -79,21 +79,63 @@
 
 // module.exports = router;
 
+// import express from "express";
+// import multer from "multer";
+// import Applicant from "../models/applicant.model.js";
+
+
+// const router = express.Router();
+
+// const storage = multer.diskStorage({
+//   destination: "uploads/",
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + "-" + file.originalname);
+//   },
+// });
+
+// const upload = multer({ storage });
+
+// router.post("/apply/:jobId", upload.single("resume"), async (req, res) => {
+//   try {
+//     const applicant = new Applicant({
+//       jobId: req.params.jobId,
+//       fullName: req.body.fullName,
+//       email: req.body.email,
+//       resume: req.file.filename,
+//     });
+
+//     await applicant.save();
+//     res.json({ success: true });
+//   } catch (err) {
+//     res.status(500).json({ success: false });
+//   }
+// });
+
+// router.get("/:jobId", async (req, res) => {
+//   const applicants = await Applicant.find({ jobId: req.params.jobId });
+//   res.json(applicants);
+// });
+
+
+// export default router;   
 import express from "express";
 import multer from "multer";
 import Applicant from "../models/applicant.model.js";
 
-
 const router = express.Router();
+
+/* ================= MULTER CONFIG ================= */
 
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
 const upload = multer({ storage });
+
+/* ================= APPLY FOR JOB ================= */
 
 router.post("/apply/:jobId", upload.single("resume"), async (req, res) => {
   try {
@@ -106,15 +148,48 @@ router.post("/apply/:jobId", upload.single("resume"), async (req, res) => {
 
     await applicant.save();
     res.json({ success: true });
-  } catch (err) {
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ success: false });
   }
 });
 
-router.get("/:jobId", async (req, res) => {
-  const applicants = await Applicant.find({ jobId: req.params.jobId });
-  res.json(applicants);
+/* ============ GET SINGLE APPLICANT BY ID ============ */
+
+router.get("/applicant/:id", async (req, res) => {
+  const { id } = req.params;
+
+  // ✅ BLOCK invalid IDs
+  if (!id || id === "undefined") {
+    return res.status(400).json({ message: "Invalid applicant ID" });
+  }
+
+  try {
+    const applicant = await Applicant.findById(id);
+
+    if (!applicant) {
+      return res.status(404).json({ message: "Applicant not found" });
+    }
+
+    res.json(applicant);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
+/* ============ GET APPLICANTS BY JOB ID ============ */
 
-export default router;   
+router.get("/:jobId", async (req, res) => {
+  try {
+    const applicants = await Applicant.find({
+      jobId: req.params.jobId,
+    });
+
+    res.json(applicants);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+export default router;

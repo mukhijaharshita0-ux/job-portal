@@ -1,81 +1,165 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
-// JOB SEEKER
-import Nav from "./components/JOB_SEEKER/Nav";
-import Apply from "./components/JOB_SEEKER/Apply";
+/* ===== JOB SEEKER ===== */
 import Jobs from "./components/JOB_SEEKER/Jobs";
-
-// EMPLOYEE
-import EmployeeJobs from "./components/EMPLOYEE/EmployeeJobs";
-import Posts from "./components/EMPLOYEE/Posts";
-import Single from "./components/EMPLOYEE/Single";
-import Contact from "./components/EMPLOYEE/Contact";
-import Resume from "./components/EMPLOYEE/Resume";
-import Dashboard from "./components/EMPLOYEE/Dashboard";
-import Myjobs from "./components/EMPLOYEE/Myjobs";
-
-// AUTH
+import Apply from "./components/JOB_SEEKER/Apply";
 import Login from "./components/JOB_SEEKER/Login";
 import Register from "./components/JOB_SEEKER/Register";
+import Nav from "./components/JOB_SEEKER/Nav";
+
+/* ===== EMPLOYEE ===== */
+import Dashboard from "./components/EMPLOYEE/Dashboard";
+import Posts from "./components/EMPLOYEE/Posts";
+import Myjobs from "./components/EMPLOYEE/Myjobs";
+import Contact from "./components/EMPLOYEE/Contact";
+import Single from "./components/EMPLOYEE/Single";
+import Resume from "./components/EMPLOYEE/Resume";
+import EmployeeJobs from "./components/EMPLOYEE/EmployeeJobs";
+import Resumes from "./components/EMPLOYEE/Resumes";
+/* ===== ROUTE GUARDS ===== */
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import RoleRoute from "./components/ProtectedRoute/RoleRoute";
+
+/* ===== ROLE SELECTION ===== */
+import Users from "./components/role/Users";
 
 function App() {
-  const userId = localStorage.getItem("userId"); // 🔑 ONLY CHECK
-
   return (
     <Routes>
 
-      {/* PUBLIC ROUTES */}
+      {/* ===== AUTH ===== */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+
+      {/* ===== ROLE SELECTION ===== */}
       <Route
-        path="/login"
-        element={!userId ? <Login /> : <Navigate to="/" replace />}
-      />
-      <Route
-        path="/register"
-        element={!userId ? <Register /> : <Navigate to="/" replace />}
+        path="/users"
+        element={
+          <ProtectedRoute>
+            <Users />
+          </ProtectedRoute>
+        }
       />
 
-      {/* 🔒 PROTECTED ROUTES */}
+      {/* ===== JOB SEEKER ROUTES ===== */}
       <Route
         path="/"
-        element={userId ? <Nav /> : <Navigate to="/login" replace />}
-      />
-      <Route
-        path="/jobs"
-        element={userId ? <Jobs /> : <Navigate to="/login" replace />}
-      />
-      <Route
-        path="/apply/:jobId"
-        element={userId ? <Apply /> : <Navigate to="/login" replace />}
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="jobseeker">
+              <Nav />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
       />
 
-      {/* EMPLOYEE */}
       <Route
-        path="/employee"
-        element={userId ? <EmployeeJobs /> : <Navigate to="/login" replace />}
+        path="/jobs"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="jobseeker">
+              <Jobs />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
       />
+
       <Route
-        path="/posts"
-        element={userId ? <Posts /> : <Navigate to="/login" replace />}
+        path="/apply/:jobId"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="jobseeker">
+              <Apply />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
       />
-      <Route
-        path="/single"
-        element={userId ? <Single /> : <Navigate to="/login" replace />}
-      />
-      <Route
-        path="/myjobs"
-        element={userId ? <Myjobs /> : <Navigate to="/login" replace />}
-      />
+
+      {/* ===== EMPLOYEE ROUTES ===== */}
       <Route
         path="/dashboard"
-        element={userId ? <Dashboard /> : <Navigate to="/login" replace />}
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="employee">
+              <Dashboard />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
       />
+      <Route
+        path="/resumes"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="employee">
+              <Resumes />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/employee"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="employee">
+              <EmployeeJobs />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/posts"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="employee">
+              <Posts />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/myjobs"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="employee">
+              <Myjobs />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/single"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="employee">
+              <Single />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/contact"
-        element={userId ? <Contact /> : <Navigate to="/login" replace />}
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="employee">
+              <Contact />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
       />
+
       <Route
-        path="/resume/:jobId"
-        element={userId ? <Resume /> : <Navigate to="/login" replace />}
+        path="/resume/:id"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRole="employee">
+              <Resume />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
       />
 
     </Routes>
