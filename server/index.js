@@ -29,17 +29,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://job-portal-itjr.vercel.app",
-    "https://job-portal-itjr-git-main-mukhijaharshita0-ux.vercel.app"
+    "https://job-portal-itjr.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
-app.options("*", cors());
-
-
+app.options(/.*/, cors());
 
 
 
