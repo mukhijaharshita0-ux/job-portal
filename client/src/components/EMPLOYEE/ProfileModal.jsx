@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function ProfileModal({ show }) {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState("");
-
-
 
   useEffect(() => {
     if (!show) return;
 
     const token = localStorage.getItem("token");
-    if (!token) {
+
+    if (!token || token === "undefined") {
       setError("Not authenticated");
       return;
     }
 
     axios
-      .get("http://localhost:4000/api/profile/data", {
+      .get(`${API_URL}/api/profile/data`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

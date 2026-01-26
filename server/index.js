@@ -24,22 +24,22 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// 🔹 CORS (LOCAL + NETLIFY)
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://job-portal-e36f.vercel.app"   // ✅ your Netlify frontend
+      "https://job-portal-d6ko.vercel.app",
+      "https://www.job-portal-d6ko.vercel.app"
     ],
     credentials: true,
   })
 );
 
-// 🔹 Static uploads
+
+
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// 🔹 Routes
 app.use("/api/jobs", jobRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/contact", contactRoutes);
@@ -48,12 +48,11 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/apply", applyRoutes);
 app.use("/api/resumes", resumesRoutes);
 
-// 🔹 Health check (VERY useful on Render)
 app.get("/", (req, res) => {
-  res.send("Job Portal Backend is running 🚀");
+  res.send("Job Portal Backend is running");
 });
 
-// 🔹 Port (Render requires this)
+
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {

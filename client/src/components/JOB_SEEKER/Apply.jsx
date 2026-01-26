@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileModal from "../EMPLOYEE/ProfileModal";
-
+const API = import.meta.env.VITE_API_URL;
 const Apply = () => {
   const { jobId } = useParams();
   const [showProfile, setShowProfile] = useState(false);
@@ -21,10 +21,14 @@ const Apply = () => {
     formData.append("resume", resume);
 
     try {
-      const res = await fetch(`http://localhost:4000/resume/apply/${jobId}`, {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/apply/${jobId}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
 
       const data = await res.json();
 

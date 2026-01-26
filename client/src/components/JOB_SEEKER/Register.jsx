@@ -25,7 +25,12 @@ function Register() {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      await axios.post(`${API}/api/jobs/register`, data);
+      await axios.post(
+        `${API}/api/users/register`,
+        data,
+        { withCredentials: true }
+      );
+
       navigate("/login");
     } catch (err) {
       setError(

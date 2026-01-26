@@ -21,10 +21,12 @@ function Login() {
     setError("");
 
     try {
-      const res = await axios.post(`${API}/api/users/login`, {
-        name,
-        password,
-      });
+      const res = await axios.post(
+        `${API}/api/users/login`,
+        { name, password },
+        { withCredentials: true }
+      );
+
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -33,7 +35,7 @@ function Login() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Login failed. Please try again."
+        "Login failed. Please try again."
       );
     }
   };

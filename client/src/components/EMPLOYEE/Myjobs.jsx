@@ -11,6 +11,7 @@ import {
   Building2,
 } from "lucide-react";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Myjobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -27,7 +28,8 @@ const Myjobs = () => {
   };
 
   useEffect(() => {
-    if (!token) {
+    if (!token || token === "undefined") {
+      localStorage.clear();
       navigate("/login");
       return;
     }
@@ -35,7 +37,7 @@ const Myjobs = () => {
     const fetchMyJobs = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/jobs/myjobs",
+          `${import.meta.env.VITE_API_URL}/api/jobs/myjobs`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -57,56 +59,57 @@ const Myjobs = () => {
     fetchMyJobs();
   }, [navigate, token]);
 
+
   return (
     <>
       {/* NAVBAR */}
       <nav className="bg-neutral-primary w-full border-b border-default">
-  <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4 relative">
+        <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4 relative">
 
-    {/* LOGO */}
-    <Link
-      to="/single"
-      className="flex items-center text-[#000080] hover:text-[#1a1a99] 
+          {/* LOGO */}
+          <Link
+            to="/single"
+            className="flex items-center text-[#000080] hover:text-[#1a1a99] 
                  text-2xl sm:text-3xl font-semibold transition"
-      style={{ fontFamily: "'Limelight', cursive" }}
-    >
-      Jobsy
-    </Link>
+            style={{ fontFamily: "'Limelight', cursive" }}
+          >
+            Jobsy
+          </Link>
 
-    {/* RIGHT ACTIONS */}
-    <div className="flex items-center gap-4 md:order-2">
+          {/* RIGHT ACTIONS */}
+          <div className="flex items-center gap-4 md:order-2">
 
-      {/* PROFILE */}
-      <div
-        className="relative text-[#000080] cursor-pointer font-medium hidden sm:block"
-        onMouseEnter={() => setShowProfile(true)}
-        onMouseLeave={() => setShowProfile(false)}
-      >
-        Profile
-        <ProfileModal show={showProfile} />
-      </div>
+            {/* PROFILE */}
+            <div
+              className="relative text-[#000080] cursor-pointer font-medium hidden sm:block"
+              onMouseEnter={() => setShowProfile(true)}
+              onMouseLeave={() => setShowProfile(false)}
+            >
+              Profile
+              <ProfileModal show={showProfile} />
+            </div>
 
-      {/* LOGOUT */}
-      <button
-        onClick={handleLogout}
-        className="hidden sm:block text-[#000080] font-medium text-sm px-3 py-2 transition"
-      >
-        Logout
-      </button>
+            {/* LOGOUT */}
+            <button
+              onClick={handleLogout}
+              className="hidden sm:block text-[#000080] font-medium text-sm px-3 py-2 transition"
+            >
+              Logout
+            </button>
 
-      {/* HAMBURGER */}
-      <button
-        type="button"
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="text-[#000080] inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
-      >
-        ☰
-      </button>
-    </div>
+            {/* HAMBURGER */}
+            <button
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-[#000080] inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
+            >
+              ☰
+            </button>
+          </div>
 
-    {/* MENU */}
-    <div
-      className={`
+          {/* MENU */}
+          <div
+            className={`
         text-[#000080]
         absolute md:static
         top-full left-0
@@ -116,38 +119,38 @@ const Myjobs = () => {
         ${menuOpen ? "block" : "hidden"}
         md:flex md:order-1
       `}
-    >
-      <ul className="flex flex-col md:flex-row gap-4 md:gap-8 font-medium p-4 md:p-0">
-        <li>
-          <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
-            Dashboard
-          </Link>
-        </li>
-        <li>
-          <Link to="/myjobs" onClick={() => setMenuOpen(false)}>
-            My Jobs
-          </Link>
-        </li>
-        <li>
-          <Link to="/posts" onClick={() => setMenuOpen(false)}>
-            Post a Job
-          </Link>
-        </li>
-        <li>
-          <Link to="/contact" onClick={() => setMenuOpen(false)}>
-            Contact
-          </Link>
-        </li>
+          >
+            <ul className="flex flex-col md:flex-row gap-4 md:gap-8 font-medium p-4 md:p-0">
+              <li>
+                <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/myjobs" onClick={() => setMenuOpen(false)}>
+                  My Jobs
+                </Link>
+              </li>
+              <li>
+                <Link to="/posts" onClick={() => setMenuOpen(false)}>
+                  Post a Job
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" onClick={() => setMenuOpen(false)}>
+                  Contact
+                </Link>
+              </li>
 
-        {/* MOBILE ONLY */}
-        <li className="sm:hidden">
-          <button onClick={handleLogout}>Logout</button>
-        </li>
-      </ul>
-    </div>
+              {/* MOBILE ONLY */}
+              <li className="sm:hidden">
+                <button onClick={handleLogout}>Logout</button>
+              </li>
+            </ul>
+          </div>
 
-  </div>
-</nav>
+        </div>
+      </nav>
 
       {/* PAGE CONTENT */}
       <div className="min-h-screen bg-gray-50 pt-28 px-6">
