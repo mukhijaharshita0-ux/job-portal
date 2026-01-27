@@ -18,8 +18,7 @@ export const createJob = async (req, res) => {
       experience,
       skills,
       employment,
-      describe,
-      email
+      describe
     } = req.body;
 
     const job = await Job.create({

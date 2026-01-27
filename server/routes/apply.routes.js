@@ -137,7 +137,8 @@ const upload = multer({ storage });
 
 /* ================= APPLY FOR JOB ================= */
 
-router.post("/apply/:jobId", upload.single("resume"), async (req, res) => {
+router.post("/:jobId", upload.single("resume"), async (req, res) => {
+
   try {
     const applicant = new Applicant({
       jobId: req.params.jobId,
