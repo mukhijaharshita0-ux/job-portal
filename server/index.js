@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://job-portal-1p35.vercel.app"
+    "https://job-portal-nl5n.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
