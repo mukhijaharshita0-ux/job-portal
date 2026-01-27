@@ -7,8 +7,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const Posts = () => {
   const navigate = useNavigate();
-const [showProfile, setShowProfile] = useState(false);
-  
+  const [showProfile, setShowProfile] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     company: "",
@@ -65,7 +65,12 @@ const [showProfile, setShowProfile] = useState(false);
     setLoading(true);
 
     try {
-      const res = await axios.post(`${API_URL}/api/jobs/posts`, formData, {
+      const payload = {
+        ...formData,
+        minimum: Number(formData.minimum),
+        maximum: Number(formData.maximum),
+      };
+      const res = await axios.post(`${API_URL}/api/jobs/posts`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -186,7 +191,7 @@ const [showProfile, setShowProfile] = useState(false);
       <div className="min-h-screen pt-28 bg-gray-50 flex justify-center">
         <form
           onSubmit={handleSubmit}
-         className="w-full max-w-4xl bg-white rounded-2xl p-8 border-2 border-[#000080] hover:border-[#1a1a99] transition shadow-lg"
+          className="w-full max-w-4xl bg-white rounded-2xl p-8 border-2 border-[#000080] hover:border-[#1a1a99] transition shadow-lg"
 
         >
           <h1 className="text-3xl font-bold text-center mb-6 text-[#000080]">
