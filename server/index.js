@@ -17,10 +17,9 @@ import resumesRoutes from "./routes/resumes.routes.js";
 
 const app = express();
 
-// 🔹 Connect Database
+
 connectDB();
 
-// 🔹 Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -29,14 +28,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://job-portal-itjr.vercel.app"
+    "https://job-portal-6-0jzi.onrender.com"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
-app.options(/.*/, cors());
+
+
 
 
 
