@@ -63,14 +63,14 @@ const [showProfile, setShowProfile] = useState(false);
 
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/jobs/posts",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  `${import.meta.env.VITE_API_URL}/api/jobs/posts`,
+  formData,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
       alert("Job Posted Successfully!");
       console.log("Job Saved:", res.data);
