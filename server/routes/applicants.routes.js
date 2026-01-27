@@ -31,7 +31,7 @@ router.get("/resumes", auth, async (req, res) => {
    ============================ */
 router.post("/send-email", async (req, res) => {
   try {
-    const { email, name, message } = req.body;
+    const { email, name, subject, message } = req.body;
 
     if (!email || !name) {
       return res.status(400).json({ message: "Email and name are required" });

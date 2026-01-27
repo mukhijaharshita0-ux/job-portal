@@ -14,7 +14,7 @@ function EmailModel({ isOpen, onClose, candidate }) {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/send-email`, {
+      const res = await fetch(`${API_URL}/api/applicants/send-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
