@@ -29,7 +29,13 @@ function Login() {
 
 
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: res.data.userId,
+          role: res.data.role
+        })
+      );
 
       navigate("/users", { replace: true });
     } catch (err) {
