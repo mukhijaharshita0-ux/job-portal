@@ -35,7 +35,6 @@ export const createJob = async (req, res) => {
       skills,
       employment,
       describe,
-      email,
       postedBy: req.user.id
     });
 
