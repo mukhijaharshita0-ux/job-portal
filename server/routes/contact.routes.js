@@ -8,7 +8,7 @@ const client = twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-router.post("/contact", async (req, res) => {
+router.post("/", async (req, res) => {
   const { username, to, message } = req.body;
 
   if (!username || !to || !message) {

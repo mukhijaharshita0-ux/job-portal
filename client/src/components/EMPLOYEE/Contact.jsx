@@ -12,13 +12,7 @@ function Contact() {
   const [showProfile, setShowProfile] = useState(false);
   const navigate = useNavigate();
 
-  // // Optional: check backend route
-  // useEffect(() => {
-  //   fetch("http://localhost:4000/contact")
-  //     .then(res => res.json())
-  //     .then(data => console.log("API:", data))
-  //     .catch(err => console.log(err));
-  // }, []);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
