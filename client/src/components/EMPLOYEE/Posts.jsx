@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Posts = () => {
   const navigate = useNavigate();
 const [showProfile, setShowProfile] = useState(false);
@@ -62,15 +65,11 @@ const [showProfile, setShowProfile] = useState(false);
     setLoading(true);
 
     try {
-      const res = await axios.post(
-  `${import.meta.env.VITE_API_URL}/api/jobs/posts`,
-  formData,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
+      const res = await axios.post(`${API_URL}/api/jobs/posts`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       alert("Job Posted Successfully!");
       console.log("Job Saved:", res.data);
