@@ -32,10 +32,9 @@ app.use(cors({
     "https://job-portal-1p35.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true 
 }));
-
-
 
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
