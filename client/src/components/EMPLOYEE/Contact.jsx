@@ -10,6 +10,7 @@ function Contact() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   
@@ -59,80 +60,105 @@ function Contact() {
   };
   return (
     <>
-      <nav className="bg-neutral-primary fixed w-full z-20 top-0 border-b border-default">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+       <nav className="bg-neutral-primary w-full border-b border-default relative z-50">
+  <div className="max-w-screen-xl mx-auto p-4 flex items-center justify-between relative">
 
-          <Link
-            to="/single"
-            className="flex items-center text-[#000080] hover:text-[#1a1a99] text-3xl font-semibold transition"
+    {/* LOGO */}
+    <Link
+      to="/single"
+      className="text-[#000080] hover:text-[#1a1a99] 
+                 text-2xl sm:text-3xl font-semibold transition"
+      style={{ fontFamily: "'Limelight', cursive" }}
+    >
+      Jobsy
+    </Link>
 
-            style={{ fontFamily: "'Limelight', cursive" }}
-          >
-            Jobsy
+    {/* RIGHT ACTIONS */}
+    <div className="flex items-center gap-4 md:order-2">
+
+      {/* PROFILE (Desktop only) */}
+      <div
+        className="relative text-[#000080] cursor-pointer font-medium hidden sm:block"
+        onMouseEnter={() => setShowProfile(true)}
+        onMouseLeave={() => setShowProfile(false)}
+      >
+        Profile
+        {showProfile && <ProfileModal show={showProfile} />}
+      </div>
+
+      {/* LOGOUT (Desktop only) */}
+      <button
+        onClick={handleLogout}
+        className="hidden sm:block text-[#000080] font-medium text-sm px-3 py-2"
+      >
+        Logout
+      </button>
+
+      {/* HAMBURGER (Mobile only) */}
+      <button
+        type="button"
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="md:hidden text-[#000080] inline-flex items-center justify-center w-10 h-10 text-2xl"
+      >
+        ☰
+      </button>
+    </div>
+
+    {/* MOBILE + DESKTOP MENU */}
+    <div
+      className={`
+        absolute md:static
+        top-full left-0
+        w-full md:w-auto
+        bg-white md:bg-transparent
+        shadow-md md:shadow-none
+        z-50
+        transition-all duration-300
+        ${menuOpen ? "block" : "hidden"}
+        md:flex md:order-1
+      `}
+    >
+      <ul className="flex flex-col md:flex-row gap-4 md:gap-8 font-medium p-4 md:p-0 text-[#000080]">
+
+        <li>
+          <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
+            Dashboard
           </Link>
+        </li>
 
+        <li>
+          <Link to="/myjobs" onClick={() => setMenuOpen(false)}>
+            My Jobs
+          </Link>
+        </li>
 
+        <li>
+          <Link to="/posts" onClick={() => setMenuOpen(false)}>
+            Post a Job
+          </Link>
+        </li>
 
+        <li>
+          <Link to="/contact" onClick={() => setMenuOpen(false)}>
+            Contact
+          </Link>
+        </li>
 
+        {/* MOBILE ONLY LOGOUT */}
+        <li className="sm:hidden">
+          <button
+            onClick={handleLogout}
+            className="text-left w-full"
+          >
+            Logout
+          </button>
+        </li>
 
-          {/* RIGHT ACTIONS */}
-          <div className="flex items-center gap-4 md:order-2 relative">
+      </ul>
+    </div>
 
-            {/* PROFILE HOVER */}
-            <div
-              className="relative text-[#000080] cursor-pointer font-medium nav-item profile-item"
-              onMouseEnter={() => setShowProfile(true)}
-              onMouseLeave={() => setShowProfile(false)}
-            >
-              Profile
-              <ProfileModal show={showProfile} />
-            </div>
-
-            {/* LOGOUT */}
-            <button
-              onClick={handleLogout}
-              className="text-blue bg-brand text-[#000080] hover:bg-brand-strong font-medium rounded-base text-sm px-3 py-2 transition"
-            >
-              Logout
-            </button>
-
-            {/* MOBILE MENU ICON */}
-            <button
-              type="button"
-              className="text-[#000080] inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
-            >
-              ☰
-            </button>
-          </div>
-
-          {/* MENU */}
-          <div className="text-[#000080] hidden md:flex md:order-1">
-            <ul className="flex gap-8 font-medium">
-              <li>
-                <Link to="/dashboard" className="text-blue">
-                  Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link to="/myjobs" className="hover:text-blue">
-                  My Jobs
-                </Link>
-              </li>
-              <li>
-                <Link to="/posts" className="hover:text-blue">
-                  Post a Job
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="hover:text-blue">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-      </nav>
+  </div>
+</nav>
 
 
       <div className="min-h-screen flex items-start justify-center bg-gray-100 px-4 pt-24 sm:pt-25">

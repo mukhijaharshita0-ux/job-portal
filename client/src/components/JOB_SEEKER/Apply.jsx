@@ -1,19 +1,26 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import ProfileModal from "../EMPLOYEE/ProfileModal";
+
 const API = import.meta.env.VITE_API_URL;
+
 const Apply = () => {
   const { jobId } = useParams();
-  const [showProfile, setShowProfile] = useState(false);
-
   const navigate = useNavigate();
+
+  const [showProfile, setShowProfile] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [resume, setResume] = useState(null);
-
+  const [loading, setLoading] = useState(false);
+const [menuOpen, setMenuOpen] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!resume) {
+      alert("Please upload your resume");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("fullName", fullName);
@@ -21,24 +28,28 @@ const Apply = () => {
     formData.append("resume", resume);
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/apply/${jobId}`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      setLoading(true);
 
+      const res = await fetch(`${API}/api/apply/${jobId}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      // 🛡️ SAFETY CHECK — prevents JSON crash
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Server error response:", text);
+        alert("Application failed (server error)");
+        return;
+      }
 
       const data = await res.json();
 
       if (data.success) {
         alert("Application submitted successfully");
 
-        // 🔔 Notify Resume & Dashboard to refresh
         window.dispatchEvent(new Event("applicant-added"));
 
-        // optional: clear form
         setFullName("");
         setEmail("");
         setResume(null);
@@ -46,10 +57,13 @@ const Apply = () => {
         alert("Application failed");
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       alert("Server error");
+    } finally {
+      setLoading(false);
     }
   };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -58,62 +72,90 @@ const Apply = () => {
 
   return (
     <>
-      <nav className="w-full bg-white border-b">
+      <nav className="w-full bg-white border-b fixed top-0 z-20">
+              <div className="max-w-screen-xl mx-auto flex items-center p-4 relative text-[#000080]">
+      
+                {/* LEFT: LOGO */}
+                <Link
+                  to="/"
+                  className="text-2xl sm:text-3xl font-semibold"
+                  style={{ fontFamily: "'Limelight', cursive" }}
+                >
+                  Jobsy
+                </Link>
+      
+                {/* CENTER: NAV ITEMS (DESKTOP ONLY) */}
+                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 gap-8 font-medium">
+                  <Link to="/" className="hover:text-[#1a1a99]">Home</Link>
+                  <Link to="/jobs" className="hover:text-[#1a1a99]">Jobs</Link>
+                </div>
+      
+                {/* RIGHT: PROFILE + LOGOUT (DESKTOP ONLY) */}
+                <div className="hidden md:flex ml-auto items-center gap-6 font-medium">
+                  <div
+                    className="cursor-pointer hover:text-[#1a1a99] relative"
+                    onMouseEnter={() => setShowProfile(true)}
+                    onMouseLeave={() => setShowProfile(false)}
+                  >
+                    Profile
+                    {showProfile && <ProfileModal show />}
+                  </div>
+      
+                  <button onClick={handleLogout} className="hover:text-[#1a1a99]">
+                    Logout
+                  </button>
+                </div>
+      
+                {/* HAMBURGER (MOBILE ONLY) */}
+                <button
+                  className="ml-auto md:hidden text-2xl"
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  aria-label="Open menu"
+                >
+                  ☰
+                </button>
+              </div>
+      
+              {/* MOBILE MENU */}
+              {menuOpen && (
+                <div className="md:hidden bg-white border-t shadow-lg">
+                  <ul className="flex flex-col gap-4 px-4 py-4 font-medium text-[#000080]">
+      
+                    <li>
+                      <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+                    </li>
+      
+                    <li>
+                      <Link to="/jobs" onClick={() => setMenuOpen(false)}>Jobs</Link>
+                    </li>
+      
+                    <li>
+                      <button
+                        onClick={() => {
+                          setShowProfile(true);
+                          setMenuOpen(false);
+                        }}
+                        className="text-left w-full"
+                      >
+                        Profile
+                      </button>
+                    </li>
+      
+                    <li>
+                      <button
+                        onClick={handleLogout}
+                        className="text-left w-full"
+                      >
+                        Logout
+                      </button>
+                    </li>
+      
+                  </ul>
+                </div>
+              )}
+            </nav>
 
-        <div className="max-w-screen-xl mx-auto flex items-center p-4 relative text-[#000080]">
-
-          {/* LEFT: LOGO */}
-          <div className="flex items-center">
-            <Link
-              to="/"
-              className="flex items-center text-[#000080] hover:text-[#1a1a99] text-3xl font-semibold transition"
-
-              style={{ fontFamily: "'Limelight', cursive" }}
-            >
-              Jobsy
-            </Link>
-          </div>
-
-          {/* CENTER: NAV ITEMS */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex gap-8 font-medium">
-            <Link
-              to="/"
-              className="hover:text-[#1a1a99]"
-            >
-              Home
-            </Link>
-            <Link
-              to="/jobs"
-              className="hover:text-[#1a1a99]"
-            >
-              Jobs
-            </Link>
-          </div>
-
-          {/* RIGHT: PROFILE + LOGOUT */}
-          <div className="ml-auto flex items-center gap-6 font-medium">
-            <div
-              className="cursor-pointer hover:text-[#1a1a99]"
-              onMouseEnter={() => setShowProfile(true)}
-              onMouseLeave={() => setShowProfile(false)}
-            >
-              Profile
-              <ProfileModal show={showProfile} />
-            </div>
-
-            <button
-              onClick={handleLogout}
-              className="hover:text-[#1a1a99]"
-            >
-              Logout
-            </button>
-          </div>
-
-        </div>
-      </nav>
-
-
-
+      {/* ================= APPLY FORM ================= */}
       <div className="min-h-screen flex justify-center items-center bg-gray-100">
         <form
           onSubmit={handleSubmit}
@@ -146,8 +188,11 @@ const Apply = () => {
             onChange={(e) => setResume(e.target.files[0])}
           />
 
-          <button className="w-full bg-[#000080] text-white py-2 rounded">
-            Submit Application
+          <button
+            disabled={loading}
+            className="w-full bg-[#000080] text-white py-2 rounded disabled:opacity-60"
+          >
+            {loading ? "Submitting..." : "Submit Application"}
           </button>
         </form>
       </div>

@@ -16,6 +16,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   /* 🔒 PROTECT ROUTE */
@@ -51,52 +52,89 @@ const Jobs = () => {
 
   return (
     <>
-      {/* NAVBAR */}
-      <nav className="w-full bg-white border-b">
+    <nav className="w-full bg-white border-b fixed top-0 z-20">
         <div className="max-w-screen-xl mx-auto flex items-center p-4 relative text-[#000080]">
 
-          {/* LOGO */}
-          <div className="flex items-center">
-            <Link
-              to="/"
-              className="flex items-center text-[#000080] hover:text-[#1a1a99] text-3xl font-semibold transition"
-              style={{ fontFamily: "'Limelight', cursive" }}
-            >
-              Jobsy
-            </Link>
+          {/* LEFT: LOGO */}
+          <Link
+            to="/"
+            className="text-2xl sm:text-3xl font-semibold"
+            style={{ fontFamily: "'Limelight', cursive" }}
+          >
+            Jobsy
+          </Link>
+
+          {/* CENTER: NAV ITEMS (DESKTOP ONLY) */}
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 gap-8 font-medium">
+            <Link to="/" className="hover:text-[#1a1a99]">Home</Link>
+            <Link to="/jobs" className="hover:text-[#1a1a99]">Jobs</Link>
           </div>
 
-          {/* CENTER NAV */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex gap-8 font-medium">
-            <Link to="/" className="hover:text-[#1a1a99]">
-              Home
-            </Link>
-            <Link to="/jobs" className="hover:text-[#1a1a99]">
-              Jobs
-            </Link>
-          </div>
-
-          {/* RIGHT */}
-          <div className="ml-auto flex items-center gap-6 font-medium">
+          {/* RIGHT: PROFILE + LOGOUT (DESKTOP ONLY) */}
+          <div className="hidden md:flex ml-auto items-center gap-6 font-medium">
             <div
-              className="cursor-pointer hover:text-[#1a1a99]"
+              className="cursor-pointer hover:text-[#1a1a99] relative"
               onMouseEnter={() => setShowProfile(true)}
               onMouseLeave={() => setShowProfile(false)}
             >
               Profile
-              <ProfileModal show={showProfile} />
+              {showProfile && <ProfileModal show />}
             </div>
 
-            <button
-              onClick={handleLogout}
-              className="hover:text-[#1a1a99]"
-            >
+            <button onClick={handleLogout} className="hover:text-[#1a1a99]">
               Logout
             </button>
           </div>
 
+          {/* HAMBURGER (MOBILE ONLY) */}
+          <button
+            className="ml-auto md:hidden text-2xl"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Open menu"
+          >
+            ☰
+          </button>
         </div>
+
+        {/* MOBILE MENU */}
+        {menuOpen && (
+          <div className="md:hidden bg-white border-t shadow-lg">
+            <ul className="flex flex-col gap-4 px-4 py-4 font-medium text-[#000080]">
+
+              <li>
+                <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+              </li>
+
+              <li>
+                <Link to="/jobs" onClick={() => setMenuOpen(false)}>Jobs</Link>
+              </li>
+
+              <li>
+                <button
+                  onClick={() => {
+                    setShowProfile(true);
+                    setMenuOpen(false);
+                  }}
+                  className="text-left w-full"
+                >
+                  Profile
+                </button>
+              </li>
+
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-left w-full"
+                >
+                  Logout
+                </button>
+              </li>
+
+            </ul>
+          </div>
+        )}
       </nav>
+
 
       {/* CONTENT */}
       <div className="min-h-screen bg-gray-50 pt-28 px-6">

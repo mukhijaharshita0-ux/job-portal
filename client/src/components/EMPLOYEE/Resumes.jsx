@@ -8,6 +8,8 @@ function Resumes() {
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showProfile, setShowProfile] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,29 +43,103 @@ function Resumes() {
 
   return (
     <>
-      {/* NAVBAR */}
-      <nav className="bg-neutral-primary w-full border-b border-default">
-        <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+       <nav className="bg-neutral-primary w-full border-b border-default relative z-50">
+        <div className="max-w-screen-xl mx-auto p-4 flex items-center justify-between relative">
+      
+          {/* LOGO */}
           <Link
             to="/single"
-            className="text-[#000080] text-3xl font-semibold"
+            className="text-[#000080] hover:text-[#1a1a99] 
+                       text-2xl sm:text-3xl font-semibold transition"
             style={{ fontFamily: "'Limelight', cursive" }}
           >
             Jobsy
           </Link>
-
-          <div
-            onMouseEnter={() => setShowProfile(true)}
-            onMouseLeave={() => setShowProfile(false)}
-            className="relative cursor-pointer text-[#000080]"
-          >
-            Profile
-            <ProfileModal show={showProfile} />
+      
+          {/* RIGHT ACTIONS */}
+          <div className="flex items-center gap-4 md:order-2">
+      
+            {/* PROFILE (Desktop only) */}
+            <div
+              className="relative text-[#000080] cursor-pointer font-medium hidden sm:block"
+              onMouseEnter={() => setShowProfile(true)}
+              onMouseLeave={() => setShowProfile(false)}
+            >
+              Profile
+              {showProfile && <ProfileModal show={showProfile} />}
+            </div>
+      
+            {/* LOGOUT (Desktop only) */}
+            <button
+              onClick={handleLogout}
+              className="hidden sm:block text-[#000080] font-medium text-sm px-3 py-2"
+            >
+              Logout
+            </button>
+      
+            {/* HAMBURGER (Mobile only) */}
+            <button
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden text-[#000080] inline-flex items-center justify-center w-10 h-10 text-2xl"
+            >
+              ☰
+            </button>
           </div>
-
-          <button onClick={handleLogout} className="text-[#000080]">
-            Logout
-          </button>
+      
+          {/* MOBILE + DESKTOP MENU */}
+          <div
+            className={`
+              absolute md:static
+              top-full left-0
+              w-full md:w-auto
+              bg-white md:bg-transparent
+              shadow-md md:shadow-none
+              z-50
+              transition-all duration-300
+              ${menuOpen ? "block" : "hidden"}
+              md:flex md:order-1
+            `}
+          >
+            <ul className="flex flex-col md:flex-row gap-4 md:gap-8 font-medium p-4 md:p-0 text-[#000080]">
+      
+              <li>
+                <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
+                  Dashboard
+                </Link>
+              </li>
+      
+              <li>
+                <Link to="/myjobs" onClick={() => setMenuOpen(false)}>
+                  My Jobs
+                </Link>
+              </li>
+      
+              <li>
+                <Link to="/posts" onClick={() => setMenuOpen(false)}>
+                  Post a Job
+                </Link>
+              </li>
+      
+              <li>
+                <Link to="/contact" onClick={() => setMenuOpen(false)}>
+                  Contact
+                </Link>
+              </li>
+      
+              {/* MOBILE ONLY LOGOUT */}
+              <li className="sm:hidden">
+                <button
+                  onClick={handleLogout}
+                  className="text-left w-full"
+                >
+                  Logout
+                </button>
+              </li>
+      
+            </ul>
+          </div>
+      
         </div>
       </nav>
 

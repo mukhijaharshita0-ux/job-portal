@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Users() {
   const navigate = useNavigate();
 
-  //  Block page if not logged in
+  // Block page if not logged in
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -12,67 +12,58 @@ function Users() {
     }
   }, [navigate]);
 
-  //  Handle role selection safely
   const handleRoleSelect = (role) => {
     const storedUser = localStorage.getItem("user");
-
     let user = {};
 
-    //  SAFE PARSING (NO CRASH EVER)
     if (storedUser && storedUser !== "undefined") {
       try {
         user = JSON.parse(storedUser);
-      } catch (err) {
-        console.error("Invalid user data. Resetting user.");
+      } catch {
         user = {};
       }
     }
 
-    //  Save role permanently until logout
-    const updatedUser = {
-      ...user,
-      role,
-    };
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ ...user, role })
+    );
 
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-
-    //  Redirect based on role
-    if (role === "employee") {
-      navigate("/single", { replace: true });
-    } else {
-      navigate("/", { replace: true });
-    }
+    role === "employee"
+      ? navigate("/single", { replace: true })
+      : navigate("/", { replace: true });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700">
-      <div className="bg-white rounded-2xl shadow-2xl p-10 w-[360px] text-center">
-        <p className="text-2xl font-semibold text-gray-800 mb-2">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm text-center">
+
+        <h2 className="text-2xl font-semibold mb-2 text-gray-800">
           Welcome 👋
-        </p>
-        <p className="text-gray-500 mb-8">
+        </h2>
+
+        <p className="text-gray-500 mb-6">
           Tell us who you are
         </p>
 
         <div className="flex flex-col gap-4">
           <button
             onClick={() => handleRoleSelect("jobseeker")}
-            className="w-full py-3 rounded-xl text-white bg-indigo-600
-                       hover:bg-indigo-700 hover:scale-105
-                       transition-all duration-300"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg
+                       hover:bg-blue-700 transition"
           >
             Job Seeker
           </button>
 
           <button
             onClick={() => handleRoleSelect("employee")}
-            className="w-full py-3 rounded-xl text-white bg-purple-600
-                       hover:bg-purple-700 hover:scale-105
-                       transition-all duration-300"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg
+                       hover:bg-blue-700 transition"
           >
             Employee
           </button>
         </div>
+
       </div>
     </div>
   );

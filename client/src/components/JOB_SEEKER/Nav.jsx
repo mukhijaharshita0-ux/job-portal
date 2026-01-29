@@ -1,13 +1,14 @@
 import hero from "../images/hero-image.png";
 import cat from "../images/cat-bg.jpg";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ProfileModal from "../EMPLOYEE/ProfileModal";
 
 function Nav() {
   const navigate = useNavigate();
   const [openEmailModal, setOpenEmailModal] = useState(false);
-const [showProfile, setShowProfile] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
@@ -17,59 +18,89 @@ const [showProfile, setShowProfile] = useState(false);
 
   return (
     <>
-      {/* NAVBAR */}
-    <nav className="w-full bg-white border-b fixed top-0 z-20">
+      <nav className="w-full bg-white border-b fixed top-0 z-20">
         <div className="max-w-screen-xl mx-auto flex items-center p-4 relative text-[#000080]">
 
           {/* LEFT: LOGO */}
-          <div className="flex items-center">
-            <Link
-              to="/"
-              className="flex items-center text-[#000080] hover:text-[#1a1a99] text-3xl font-semibold transition"
+          <Link
+            to="/"
+            className="text-2xl sm:text-3xl font-semibold"
+            style={{ fontFamily: "'Limelight', cursive" }}
+          >
+            Jobsy
+          </Link>
 
-              style={{ fontFamily: "'Limelight', cursive" }}
-            >
-              Jobsy
-            </Link>
+          {/* CENTER: NAV ITEMS (DESKTOP ONLY) */}
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 gap-8 font-medium">
+            <Link to="/" className="hover:text-[#1a1a99]">Home</Link>
+            <Link to="/jobs" className="hover:text-[#1a1a99]">Jobs</Link>
           </div>
 
-          {/* CENTER: NAV ITEMS */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex gap-8 font-medium">
-            <Link
-              to="/"
-              className="hover:text-[#1a1a99]"
-            >
-              Home
-            </Link>
-            <Link
-              to="/jobs"
-              className="hover:text-[#1a1a99]"
-            >
-              Jobs
-            </Link>
-          </div>
-
-          {/* RIGHT: PROFILE + LOGOUT */}
-          <div className="ml-auto flex items-center gap-6 font-medium">
+          {/* RIGHT: PROFILE + LOGOUT (DESKTOP ONLY) */}
+          <div className="hidden md:flex ml-auto items-center gap-6 font-medium">
             <div
-              className="cursor-pointer hover:text-[#1a1a99]"
+              className="cursor-pointer hover:text-[#1a1a99] relative"
               onMouseEnter={() => setShowProfile(true)}
               onMouseLeave={() => setShowProfile(false)}
             >
               Profile
-              <ProfileModal show={showProfile} />
+              {showProfile && <ProfileModal show />}
             </div>
 
-            <button
-              onClick={handleLogout}
-              className="hover:text-[#1a1a99]"
-            >
+            <button onClick={handleLogout} className="hover:text-[#1a1a99]">
               Logout
             </button>
           </div>
 
+          {/* HAMBURGER (MOBILE ONLY) */}
+          <button
+            className="ml-auto md:hidden text-2xl"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Open menu"
+          >
+            ☰
+          </button>
         </div>
+
+        {/* MOBILE MENU */}
+        {menuOpen && (
+          <div className="md:hidden bg-white border-t shadow-lg">
+            <ul className="flex flex-col gap-4 px-4 py-4 font-medium text-[#000080]">
+
+              <li>
+                <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+              </li>
+
+              <li>
+                <Link to="/jobs" onClick={() => setMenuOpen(false)}>Jobs</Link>
+              </li>
+
+              <li>
+                <button
+                  onClick={() => {
+                    setShowProfile(true);
+                    setMenuOpen(false);
+                  }}
+                  className="text-left w-full"
+                >
+                  Profile
+                </button>
+              </li>
+
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-left w-full"
+                >
+                  Logout
+                </button>
+              </li>
+
+            </ul>
+          </div>
+        )}
       </nav>
+
 
       {/* SECOND SECTION */}
       <div className="mt-[120px] w-full">
@@ -91,13 +122,28 @@ const [showProfile, setShowProfile] = useState(false);
 
         {/* LEFT */}
         <div className="w-full md:w-1/2 flex flex-col items-center md:items-start md:ml-20">
-          <p className="text-4xl font-semibold mb-5 text-gray-800">
+          <p className="text-2xl 
+  sm:text-3xl 
+  md:text-4xl 
+  font-semibold 
+  mb-5 
+  text-gray-800 
+  text-center md:text-left">
             For any query, message us
           </p>
 
+
           <div
             onClick={() => setOpenEmailModal(true)}
-            className="border-2 border-gray-300 rounded-xl px-6 py-3 cursor-pointer hover:bg-gray-100 transition"
+            className=" border-2 border-gray-300 
+    rounded-xl 
+    px-4 py-2 
+    sm:px-5 sm:py-2.5 
+    md:px-6 md:py-3
+    cursor-pointer 
+    hover:bg-gray-100 
+    transition
+    text-sm sm:text-base"
           >
             Message here
           </div>
@@ -117,7 +163,7 @@ const [showProfile, setShowProfile] = useState(false);
       {openEmailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div className="bg-white w-[90%] max-w-md rounded-2xl p-6 relative">
-            
+
             <button
               onClick={() => setOpenEmailModal(false)}
               className="absolute top-3 right-3 text-gray-400 hover:text-black text-xl"
