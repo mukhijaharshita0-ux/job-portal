@@ -15,10 +15,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const Myjobs = () => {
   const [jobs, setJobs] = useState([]);
-  const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   /* LOGOUT */
@@ -27,6 +27,7 @@ const Myjobs = () => {
     navigate("/login");
   };
 
+  /* FETCH MY JOBS */
   useEffect(() => {
     if (!token || token === "undefined") {
       localStorage.clear();
@@ -36,19 +37,15 @@ const Myjobs = () => {
 
     const fetchMyJobs = async () => {
       try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/jobs/myjobs`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axios.get(`${API_URL}/api/jobs/myjobs`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        setJobs(data?.jobs || []);
+        setJobs(res.data?.jobs || []);
       } catch (error) {
-        console.error("Error fetching my jobs:", error);
-
+        console.error(error);
         if (error.response?.status === 401) {
           localStorage.clear();
           navigate("/login");
@@ -59,108 +56,81 @@ const Myjobs = () => {
     fetchMyJobs();
   }, [navigate, token]);
 
+  const handleDeleteJob = async (jobId) => {
+    try {
+      await axios.delete(`${API_URL}/api/jobs/${jobId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // remove deleted job from UI instantly
+      setJobs(prev => prev.filter(job => job._id !== jobId));
+
+    } catch (error) {
+      console.error("Delete failed:", error.response?.data || error.message);
+    }
+  };
+
+
 
   return (
     <>
-       <nav className="bg-neutral-primary w-full border-b border-default relative z-50">
-  <div className="max-w-screen-xl mx-auto p-4 flex items-center justify-between relative">
-
-    {/* LOGO */}
-    <Link
-      to="/single"
-      className="text-[#000080] hover:text-[#1a1a99] 
-                 text-2xl sm:text-3xl font-semibold transition"
-      style={{ fontFamily: "'Limelight', cursive" }}
-    >
-      Jobsy
-    </Link>
-
-    {/* RIGHT ACTIONS */}
-    <div className="flex items-center gap-4 md:order-2">
-
-      {/* PROFILE (Desktop only) */}
-      <div
-        className="relative text-[#000080] cursor-pointer font-medium hidden sm:block"
-        onMouseEnter={() => setShowProfile(true)}
-        onMouseLeave={() => setShowProfile(false)}
-      >
-        Profile
-        {showProfile && <ProfileModal show={showProfile} />}
-      </div>
-
-      {/* LOGOUT (Desktop only) */}
-      <button
-        onClick={handleLogout}
-        className="hidden sm:block text-[#000080] font-medium text-sm px-3 py-2"
-      >
-        Logout
-      </button>
-
-      {/* HAMBURGER (Mobile only) */}
-      <button
-        type="button"
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="md:hidden text-[#000080] inline-flex items-center justify-center w-10 h-10 text-2xl"
-      >
-        ☰
-      </button>
-    </div>
-
-    {/* MOBILE + DESKTOP MENU */}
-    <div
-      className={`
-        absolute md:static
-        top-full left-0
-        w-full md:w-auto
-        bg-white md:bg-transparent
-        shadow-md md:shadow-none
-        z-50
-        transition-all duration-300
-        ${menuOpen ? "block" : "hidden"}
-        md:flex md:order-1
-      `}
-    >
-      <ul className="flex flex-col md:flex-row gap-4 md:gap-8 font-medium p-4 md:p-0 text-[#000080]">
-
-        <li>
-          <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
-            Dashboard
-          </Link>
-        </li>
-
-        <li>
-          <Link to="/myjobs" onClick={() => setMenuOpen(false)}>
-            My Jobs
-          </Link>
-        </li>
-
-        <li>
-          <Link to="/posts" onClick={() => setMenuOpen(false)}>
-            Post a Job
-          </Link>
-        </li>
-
-        <li>
-          <Link to="/contact" onClick={() => setMenuOpen(false)}>
-            Contact
-          </Link>
-        </li>
-
-        {/* MOBILE ONLY LOGOUT */}
-        <li className="sm:hidden">
-          <button
-            onClick={handleLogout}
-            className="text-left w-full"
+      {/* NAVBAR */}
+      <nav className="bg-neutral-primary w-full border-b border-default relative z-50">
+        <div className="max-w-screen-xl mx-auto p-4 flex items-center justify-between">
+          <Link
+            to="/single"
+            className="text-[#000080] text-2xl sm:text-3xl font-semibold"
+            style={{ fontFamily: "'Limelight', cursive" }}
           >
-            Logout
-          </button>
-        </li>
+            Jobsy
+          </Link>
 
-      </ul>
-    </div>
+          <div className="flex items-center gap-4">
+            {/* Profile (desktop) */}
+            <div
+              className="relative hidden sm:block cursor-pointer text-[#000080]"
+              onMouseEnter={() => setShowProfile(true)}
+              onMouseLeave={() => setShowProfile(false)}
+            >
+              Profile
+              {showProfile && <ProfileModal show={showProfile} />}
+            </div>
 
-  </div>
-</nav>
+            {/* Logout (desktop) */}
+            <button
+              onClick={handleLogout}
+              className="hidden sm:block text-[#000080]"
+            >
+              Logout
+            </button>
+
+            {/* Hamburger */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden text-2xl text-[#000080]"
+            >
+              ☰
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <ul className="md:hidden bg-white shadow p-4 space-y-3 text-[#000080]">
+            <li><Link to="/dashboard">Dashboard</Link></li>
+            <li><Link to="/myjobs">My Jobs</Link></li>
+            <li><Link to="/posts">Post a Job</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+            <li>
+              <button onClick={handleLogout} className="w-full text-left">
+                Logout
+              </button>
+            </li>
+          </ul>
+        )}
+      </nav>
 
       {/* PAGE CONTENT */}
       <div className="min-h-screen bg-gray-50 pt-28 px-6">
@@ -170,15 +140,15 @@ const Myjobs = () => {
 
         {jobs.length === 0 ? (
           <div className="text-center text-gray-500 mt-20">
-            <Briefcase size={48} className="mx-auto mb-4 text-gray-400" />
-            <p className="text-lg">No jobs posted yet</p>
+            <Briefcase size={48} className="mx-auto mb-4" />
+            <p>No jobs posted yet</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {jobs.map((job) => (
               <div
                 key={job._id}
-                className="bg-white rounded-xl p-5 shadow-sm hover:shadow-lg transition"
+                className="bg-white rounded-xl p-5 shadow hover:shadow-lg transition"
               >
                 {/* HEADER */}
                 <div className="flex items-center gap-4 mb-4">
@@ -187,9 +157,7 @@ const Myjobs = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {job.title}
-                    </h3>
+                    <h3 className="font-semibold">{job.title}</h3>
                     <p className="text-sm text-gray-500 flex items-center gap-1">
                       <Building2 size={14} />
                       {job.company}
@@ -201,46 +169,31 @@ const Myjobs = () => {
                 {/* DETAILS */}
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
-                    <MapPin size={16} />
-                    <span>{job.location}</span>
+                    <MapPin size={16} /> {job.location}
                   </div>
 
                   <div className="flex items-center gap-2">
                     <IndianRupee size={16} />
-                    <span>
-                      ₹{job.minimum} – ₹{job.maximum} / month
-                    </span>
+                    ₹{job.minimum} – ₹{job.maximum} / month
                   </div>
 
-                  <p>
-                    <span className="font-medium">Experience:</span>{" "}
-                    {job.experience} years
-                  </p>
-
-                  <p>
-                    <span className="font-medium">Employment:</span>{" "}
-                    {job.employment}
-                  </p>
+                  <p><b>Experience:</b> {job.experience} years</p>
+                  <p><b>Employment:</b> {job.employment}</p>
 
                   <p className="flex items-center gap-2">
                     <Calendar size={14} />
-                    <span>
-                      Posted on{" "}
-                      {new Date(job.date).toLocaleDateString()}
-                    </span>
+                    Posted on {new Date(job.date).toLocaleDateString()}
                   </p>
                 </div>
 
                 {/* SKILLS */}
                 <div className="mt-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
-                    Skills Required
-                  </p>
+                  <p className="text-sm font-medium mb-2">Skills Required</p>
                   <div className="flex flex-wrap gap-2">
-                    {job.skills?.split(",").map((skill, index) => (
+                    {job.skills?.split(",").map((skill, i) => (
                       <span
-                        key={index}
-                        className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
+                        key={i}
+                        className="px-2 py-1 text-xs bg-gray-100 rounded-full"
                       >
                         {skill.trim()}
                       </span>
@@ -260,9 +213,13 @@ const Myjobs = () => {
                     {job.email}
                   </span>
 
-                  <span className="px-3 py-1 text-xs font-medium bg-green-50 text-green-600 rounded-full">
-                    Active
-                  </span>
+                  <button
+                    onClick={() => handleDeleteJob(job._id)}
+                    className="px-3 py-1 text-xs font-medium bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
+                  >
+                    Delete
+                  </button>
+
                 </div>
               </div>
             ))}

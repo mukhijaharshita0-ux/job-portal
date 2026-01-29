@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import { Link, useNavigate } from "react-router-dom";
 import EmailModel from "./EmailModel";
 import ProfileModal from "./ProfileModal";
@@ -15,6 +16,7 @@ function Dashboard() {
   const [showProfile, setShowProfile] = useState(false);
  
 
+ useEffect(() => {
   fetch(`${API}/api/applicants`)
     .then(res => res.json())
     .then(data => {
@@ -28,6 +30,7 @@ function Dashboard() {
       setCandidates(formatted);
     })
     .catch(err => console.log(err));
+}, []); // 👈 empty dependency array = run ONCE
 
 
   //  UPDATE STATUS (FRONTEND ONLY)
