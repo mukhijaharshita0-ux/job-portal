@@ -19,7 +19,7 @@ const Jobs = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  /* 🔒 PROTECT ROUTE */
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -27,7 +27,7 @@ const Jobs = () => {
     }
   }, [navigate]);
 
-  /* 📦 FETCH JOBS */
+ 
   useEffect(() => {
     const fetchJobs = async () => {
       try {

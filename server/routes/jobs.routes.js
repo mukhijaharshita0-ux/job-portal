@@ -2,7 +2,7 @@
 import express from "express";
 const router = express.Router();
 
-import { createJob, getMyJobs, getJobs, deleteJob } from "../controllers/jobs-controller.js";
+import { createJob, getMyJobs, getJobs } from "../controllers/jobs-controller.js";
 import{profilePage} from "../controllers/profile-controller.js"
 import Job from "../models/jobs.models.js";
 import bcrypt from "bcryptjs";
@@ -61,7 +61,8 @@ router.get("/jobs", async (req, res) => {
 router.get("/myjobs", auth, getMyJobs);
 
 router.post("/posts", auth, createJob) 
-router.delete("/:id", auth, deleteJob);
+
+
 
 
   router.get("/profile",auth, profilePage)

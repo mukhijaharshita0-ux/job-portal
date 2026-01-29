@@ -15,10 +15,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const Myjobs = () => {
   const [jobs, setJobs] = useState([]);
+  const navigate = useNavigate();
   const [showProfile, setShowProfile] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   /* LOGOUT */
@@ -27,7 +27,6 @@ const Myjobs = () => {
     navigate("/login");
   };
 
-  /* FETCH MY JOBS */
   useEffect(() => {
     if (!token || token === "undefined") {
       localStorage.clear();
@@ -37,15 +36,19 @@ const Myjobs = () => {
 
     const fetchMyJobs = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/jobs/myjobs`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/jobs/myjobs`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        setJobs(res.data?.jobs || []);
+        setJobs(data?.jobs || []);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching my jobs:", error);
+
         if (error.response?.status === 401) {
           localStorage.clear();
           navigate("/login");
@@ -56,80 +59,97 @@ const Myjobs = () => {
     fetchMyJobs();
   }, [navigate, token]);
 
-  const handleDeleteJob = async (jobId) => {
-    try {
-      await axios.delete(`${API_URL}/api/jobs/${jobId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // remove deleted job from UI instantly
-      setJobs(prev => prev.filter(job => job._id !== jobId));
-
-    } catch (error) {
-      console.error("Delete failed:", error.response?.data || error.message);
-    }
-  };
-
-
 
   return (
     <>
       {/* NAVBAR */}
-      <nav className="bg-neutral-primary w-full border-b border-default relative z-50">
-        <div className="max-w-screen-xl mx-auto p-4 flex items-center justify-between">
+      <nav className="bg-neutral-primary w-full border-b border-default">
+        <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4 relative">
+
+          {/* LOGO */}
           <Link
             to="/single"
-            className="text-[#000080] text-2xl sm:text-3xl font-semibold"
+            className="flex items-center text-[#000080] hover:text-[#1a1a99] 
+                 text-2xl sm:text-3xl font-semibold transition"
             style={{ fontFamily: "'Limelight', cursive" }}
           >
             Jobsy
           </Link>
 
-          <div className="flex items-center gap-4">
-            {/* Profile (desktop) */}
+          {/* RIGHT ACTIONS */}
+          <div className="flex items-center gap-4 md:order-2">
+
+            {/* PROFILE */}
             <div
-              className="relative hidden sm:block cursor-pointer text-[#000080]"
+              className="relative text-[#000080] cursor-pointer font-medium hidden sm:block"
               onMouseEnter={() => setShowProfile(true)}
               onMouseLeave={() => setShowProfile(false)}
             >
               Profile
-              {showProfile && <ProfileModal show={showProfile} />}
+              <ProfileModal show={showProfile} />
             </div>
 
-            {/* Logout (desktop) */}
+            {/* LOGOUT */}
             <button
               onClick={handleLogout}
-              className="hidden sm:block text-[#000080]"
+              className="hidden sm:block text-[#000080] font-medium text-sm px-3 py-2 transition"
             >
               Logout
             </button>
 
-            {/* Hamburger */}
+            {/* HAMBURGER */}
             <button
+              type="button"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden text-2xl text-[#000080]"
+              className="text-[#000080] inline-flex items-center p-2 w-10 h-10 justify-center md:hidden"
             >
               ☰
             </button>
           </div>
-        </div>
 
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <ul className="md:hidden bg-white shadow p-4 space-y-3 text-[#000080]">
-            <li><Link to="/dashboard">Dashboard</Link></li>
-            <li><Link to="/myjobs">My Jobs</Link></li>
-            <li><Link to="/posts">Post a Job</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
-            <li>
-              <button onClick={handleLogout} className="w-full text-left">
-                Logout
-              </button>
-            </li>
-          </ul>
-        )}
+          {/* MENU */}
+          <div
+            className={`
+        text-[#000080]
+        absolute md:static
+        top-full left-0
+        w-full md:w-auto
+        bg-white md:bg-transparent
+        shadow-md md:shadow-none
+        ${menuOpen ? "block" : "hidden"}
+        md:flex md:order-1
+      `}
+          >
+            <ul className="flex flex-col md:flex-row gap-4 md:gap-8 font-medium p-4 md:p-0">
+              <li>
+                <Link to="/dashboard" onClick={() => setMenuOpen(false)}>
+                  Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/myjobs" onClick={() => setMenuOpen(false)}>
+                  My Jobs
+                </Link>
+              </li>
+              <li>
+                <Link to="/posts" onClick={() => setMenuOpen(false)}>
+                  Post a Job
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" onClick={() => setMenuOpen(false)}>
+                  Contact
+                </Link>
+              </li>
+
+              {/* MOBILE ONLY */}
+              <li className="sm:hidden">
+                <button onClick={handleLogout}>Logout</button>
+              </li>
+            </ul>
+          </div>
+
+        </div>
       </nav>
 
       {/* PAGE CONTENT */}
@@ -140,15 +160,15 @@ const Myjobs = () => {
 
         {jobs.length === 0 ? (
           <div className="text-center text-gray-500 mt-20">
-            <Briefcase size={48} className="mx-auto mb-4" />
-            <p>No jobs posted yet</p>
+            <Briefcase size={48} className="mx-auto mb-4 text-gray-400" />
+            <p className="text-lg">No jobs posted yet</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {jobs.map((job) => (
               <div
                 key={job._id}
-                className="bg-white rounded-xl p-5 shadow hover:shadow-lg transition"
+                className="bg-white rounded-xl p-5 shadow-sm hover:shadow-lg transition"
               >
                 {/* HEADER */}
                 <div className="flex items-center gap-4 mb-4">
@@ -157,7 +177,9 @@ const Myjobs = () => {
                   </div>
 
                   <div>
-                    <h3 className="font-semibold">{job.title}</h3>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {job.title}
+                    </h3>
                     <p className="text-sm text-gray-500 flex items-center gap-1">
                       <Building2 size={14} />
                       {job.company}
@@ -169,31 +191,46 @@ const Myjobs = () => {
                 {/* DETAILS */}
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex items-center gap-2">
-                    <MapPin size={16} /> {job.location}
+                    <MapPin size={16} />
+                    <span>{job.location}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <IndianRupee size={16} />
-                    ₹{job.minimum} – ₹{job.maximum} / month
+                    <span>
+                      ₹{job.minimum} – ₹{job.maximum} / month
+                    </span>
                   </div>
 
-                  <p><b>Experience:</b> {job.experience} years</p>
-                  <p><b>Employment:</b> {job.employment}</p>
+                  <p>
+                    <span className="font-medium">Experience:</span>{" "}
+                    {job.experience} years
+                  </p>
+
+                  <p>
+                    <span className="font-medium">Employment:</span>{" "}
+                    {job.employment}
+                  </p>
 
                   <p className="flex items-center gap-2">
                     <Calendar size={14} />
-                    Posted on {new Date(job.date).toLocaleDateString()}
+                    <span>
+                      Posted on{" "}
+                      {new Date(job.date).toLocaleDateString()}
+                    </span>
                   </p>
                 </div>
 
                 {/* SKILLS */}
                 <div className="mt-4">
-                  <p className="text-sm font-medium mb-2">Skills Required</p>
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    Skills Required
+                  </p>
                   <div className="flex flex-wrap gap-2">
-                    {job.skills?.split(",").map((skill, i) => (
+                    {job.skills?.split(",").map((skill, index) => (
                       <span
-                        key={i}
-                        className="px-2 py-1 text-xs bg-gray-100 rounded-full"
+                        key={index}
+                        className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
                       >
                         {skill.trim()}
                       </span>
@@ -201,25 +238,34 @@ const Myjobs = () => {
                   </div>
                 </div>
 
-                {/* DESCRIPTION */}
-                <p className="mt-4 text-sm text-gray-600 line-clamp-3">
+                <p className="
+  mt-3 sm:mt-4
+  text-xs sm:text-sm md:text-base
+  text-gray-600
+  break-words
+  leading-relaxed
+  line-clamp-2 sm:line-clamp-3 md:line-clamp-4
+">
                   {job.describe}
                 </p>
 
                 {/* FOOTER */}
-                <div className="mt-4 flex justify-between items-center border-t pt-3">
+                <div className="
+  mt-4
+  flex flex-col sm:flex-row
+  gap-2 sm:gap-0
+  sm:justify-between sm:items-center
+  border-t pt-3
+">
+
                   <span className="flex items-center gap-1 text-xs text-gray-500">
                     <Mail size={14} />
                     {job.email}
                   </span>
 
-                  <button
-                    onClick={() => handleDeleteJob(job._id)}
-                    className="px-3 py-1 text-xs font-medium bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
-                  >
-                    Delete
-                  </button>
-
+                  <span className="px-3 py-1 text-xs font-medium bg-green-50 text-green-600 rounded-full">
+                    Active
+                  </span>
                 </div>
               </div>
             ))}

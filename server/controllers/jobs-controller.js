@@ -86,32 +86,3 @@ export const getJobs = async (req, res) => {
     });
   }
 };
-/* DELETE JOB */
-export const deleteJob = async (req, res) => {
-  try {
-    const jobId = req.params.id;
-
-    const job = await Job.findById(jobId);
-
-    if (!job) {
-      return res.status(404).json({ message: "Job not found" });
-    }
-
-    // security: only owner can delete
-    if (job.postedBy.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Not authorized" });
-    }
-
-    await Job.findByIdAndDelete(jobId);
-
-    res.status(200).json({
-      success: true,
-      message: "Job deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete job",
-    });
-  }
-};
