@@ -138,8 +138,14 @@ const upload = multer({ storage });
 /* ================= APPLY FOR JOB ================= */
 
 router.post("/:jobId", upload.single("resume"), async (req, res) => {
-
   try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Resume file is required",
+      });
+    }
+
     const applicant = new Applicant({
       jobId: req.params.jobId,
       fullName: req.body.fullName,
@@ -154,6 +160,7 @@ router.post("/:jobId", upload.single("resume"), async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
+
 
 /* ============ GET SINGLE APPLICANT BY ID ============ */
 
